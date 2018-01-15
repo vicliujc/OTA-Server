@@ -2,7 +2,10 @@ package com.vic.main;
 
 import java.util.concurrent.TimeUnit;
 
+import com.vic.ServerHandler.OfflineHandler;
+import com.vic.ServerHandler.Register;
 import com.vic.ServerHandler.ServerHandler;
+import com.vic.gprs.GprsAttribute;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -14,9 +17,11 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.AttributeKey;
 
 public class NettyStart {
 	private int port;
+	
 	
 	public int getPort() {
 		return port;
@@ -41,8 +46,10 @@ public class NettyStart {
             	@Override
             	public void initChannel(Channel ch) throws Exception{
             		ChannelPipeline p=ch.pipeline();
+            		p.addLast(new Register());
             		p.addLast(new ServerHandler());
             		p.addLast(new IdleStateHandler(30, 30, 30,TimeUnit.MINUTES));
+            		p.addLast(new OfflineHandler());
             		
             	}
 			}).childOption(ChannelOption.SO_KEEPALIVE, true);

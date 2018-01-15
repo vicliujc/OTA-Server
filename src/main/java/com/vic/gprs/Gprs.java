@@ -8,18 +8,18 @@ import io.netty.channel.ChannelHandlerContext;
 public class Gprs {
 	private static final Map<String,ChannelHandlerContext> onlineGprs=new HashMap<String, ChannelHandlerContext>();
 
-	public static Map<String, ChannelHandlerContext> getOnlineGprs() {
+	public synchronized static Map<String, ChannelHandlerContext> getOnlineGprs() {
 		return onlineGprs;
 	}
 
-	public static boolean containsKey(String gprsID) {
+	public synchronized static boolean containsKey(String gprsID) {
 		return onlineGprs.containsKey(gprsID);
 	}
-	public static void put(String id,ChannelHandlerContext ctx) {
+	public synchronized static void put(String id,ChannelHandlerContext ctx) {
 		onlineGprs.put(id, ctx);
 	}
 	
-	public static void remove(String id) {
+	public synchronized static void remove(String id) {
 		onlineGprs.remove(id);
 	}
 

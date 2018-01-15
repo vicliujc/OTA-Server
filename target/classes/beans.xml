@@ -10,6 +10,5 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
    <bean id="nettyStart" class="com.vic.main.NettyStart">
       <property name="port" value="9009"></property>
    </bean>
-   
-   
+   <bean id="gprsAttribute" class="com.vic.gprs.GprsAttribute" scope="prototype"></bean>
 </beans>
