@@ -1,5 +1,7 @@
 package com.vic.main;
 
+import java.util.concurrent.TimeUnit;
+
 import com.vic.ServerHandler.ServerHandler;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -7,9 +9,11 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 
 public class NettyStart {
 	private int port;
@@ -36,7 +40,10 @@ public class NettyStart {
             .childHandler(new ChannelInitializer<Channel>() {
             	@Override
             	public void initChannel(Channel ch) throws Exception{
-            		ch.pipeline().addLast(new ServerHandler());
+            		ChannelPipeline p=ch.pipeline();
+            		p.addLast(new ServerHandler());
+            		p.addLast(new IdleStateHandler(30, 30, 30,TimeUnit.MINUTES));
+            		
             	}
 			}).childOption(ChannelOption.SO_KEEPALIVE, true);
 			
