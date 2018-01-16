@@ -8,10 +8,6 @@ public class GprsAttribute {
 	public String getGprs() {
 		return gprs;
 	}
-	public GprsAttribute(String gprs, ChannelHandlerContext ctx) {
-		this.gprs = gprs;
-		this.ctx = ctx;
-	}
 	public void setGprs(String gprs) {
 		this.gprs = gprs;
 	}

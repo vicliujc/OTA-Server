@@ -21,7 +21,7 @@ import io.netty.util.AttributeKey;
 
 public class NettyStart {
 	private int port;
-	
+	public final static AttributeKey<GprsAttribute> GPRS = AttributeKey.valueOf("GprsAttribute");
 	
 	public int getPort() {
 		return port;
@@ -46,9 +46,9 @@ public class NettyStart {
             	@Override
             	public void initChannel(Channel ch) throws Exception{
             		ChannelPipeline p=ch.pipeline();
-            		p.addLast(new Register());
+            		p.addLast("Register",new Register());
             		p.addLast(new ServerHandler());
-            		p.addLast(new IdleStateHandler(30, 30, 30,TimeUnit.MINUTES));
+            		p.addLast(new IdleStateHandler(1,1, 1,TimeUnit.MINUTES));
             		p.addLast(new OfflineHandler());
             		
             	}

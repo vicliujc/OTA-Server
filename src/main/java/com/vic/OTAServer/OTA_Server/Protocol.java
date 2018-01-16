@@ -3,8 +3,12 @@ package com.vic.OTAServer.OTA_Server;
 import com.vic.util.*;
 
 public class Protocol {
+	private static final int MIN_FRAME_LENGHT = 11;
 	
 	public static String getGprsId(byte[] msg) {
+		if (msg.length<MIN_FRAME_LENGHT) {
+			return null;
+		}
 		byte[] gprs=new byte[6];
 	    System.arraycopy(msg, 4, gprs, 0, 6);
 	    byte[] n=new byte[3];

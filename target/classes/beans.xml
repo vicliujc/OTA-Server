@@ -8,7 +8,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/context/spring-context.xsd">
    
    <bean id="nettyStart" class="com.vic.main.NettyStart">
-      <property name="port" value="9009"></property>
+      <property name="port" value="9000"></property>
    </bean>
    <bean id="gprsAttribute" class="com.vic.gprs.GprsAttribute" scope="prototype"></bean>
 </beans>
