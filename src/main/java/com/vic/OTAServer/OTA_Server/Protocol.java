@@ -18,5 +18,7 @@ public class Protocol {
 		gprsId += String.format("%6s", idNum.trim()).replaceAll("\\s", "0");
 		return gprsId;
 	}
+	
+	public static 
 
 }
