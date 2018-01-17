@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class DocRead {
 	
@@ -20,13 +23,26 @@ public class DocRead {
 		this.path = path;
 	}
 	
+	private boolean fileExist(String path) throws Exception{
+		File file=new File(path);
+		try {
+			
+			if (file.exists()) {
+				return true;
+			}
+			System.out.println(path + " 此路径文件不存在");
+			throw new Exception("未找到文件");
+		} finally {
+			// TODO: handle finally clause
+			
+		}
+	
+	}
+	
 	public byte[] getDocBin() throws Exception {
-		File file =new File(path);
-		if (!file.exists()) throw new Exception("没有找到文件");
-		InputStream in=new FileInputStream(file);
-		
-		
-		
+		if (!fileExist(path)) return null;
+		Path file =Paths.get(path);
+		doc=Files.readAllBytes(file);
 		return doc;
 	}
 
