@@ -8,6 +8,7 @@ import com.vic.main.NettyStart;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 
 public class OfflineHandler extends ChannelInboundHandlerAdapter {
@@ -15,6 +16,9 @@ public class OfflineHandler extends ChannelInboundHandlerAdapter {
    @Override
    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 	   if(evt instanceof IdleStateEvent) {
+		   //判断事件是否为读失效
+		   
+		   if(((IdleStateEvent)evt).state() == IdleState.READER_IDLE)
 		   ctx.close();
 	   }
        ctx.fireUserEventTriggered(evt);

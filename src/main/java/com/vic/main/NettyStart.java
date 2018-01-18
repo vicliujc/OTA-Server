@@ -46,9 +46,9 @@ public class NettyStart {
             	@Override
             	public void initChannel(Channel ch) throws Exception{
             		ChannelPipeline p=ch.pipeline();
+            		p.addLast(new IdleStateHandler(1,0, 0,TimeUnit.MINUTES));
             		p.addLast("Register",new Register());
             		p.addLast(new ServerHandler());
-            		p.addLast(new IdleStateHandler(1,1, 1,TimeUnit.MINUTES));
             		p.addLast(new OfflineHandler());
             		
             	}
