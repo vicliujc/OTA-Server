@@ -8,6 +8,8 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.vic.mybatis.sqlStart;
+
 public class App1 {
 	private static Logger logger = Logger.getLogger(App1.class);
 	public static ApplicationContext ac=new ClassPathXmlApplicationContext("beans.xml");
@@ -17,6 +19,7 @@ public class App1 {
 		// TODO Auto-generated method stub
 		try {
 			//ApplicationContext ac=new ClassPathXmlApplicationContext("com/vic/main/beans.xml");
+			new sqlStart().test();
 			NettyStart nettyStart=(NettyStart) ac.getBean("nettyStart");
 			nettyStart.start();
 		} catch (Exception e) {

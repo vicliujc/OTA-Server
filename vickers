@@ -1,3 +1,0 @@
-2018-01-15 12:33:42  [ main:0 ] - [ DEBUG ]  Exception
-java.lang.NullPointerException
-	at com.vic.main.App1.main(App1.java:20)
