@@ -23,7 +23,13 @@ public class DocRead {
 		this.path = path;
 	}
 	
-	private boolean fileExist(String path) throws Exception{
+	/***
+	 * 判断文件存在
+	 * @param path
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean fileExist(String path) throws Exception{
 		File file=new File(path);
 		try {
 			
@@ -38,7 +44,11 @@ public class DocRead {
 		}
 	
 	}
-	
+	/***
+	 * 读取文件byte[]
+	 * @return
+	 * @throws Exception
+	 */
 	public byte[] getDocBin() throws Exception {
 		if (!fileExist(path)) return null;
 		Path file =Paths.get(path);

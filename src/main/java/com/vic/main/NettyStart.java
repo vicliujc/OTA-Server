@@ -2,6 +2,8 @@ package com.vic.main;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
+
 import com.vic.ServerHandler.OfflineHandler;
 import com.vic.ServerHandler.Register;
 import com.vic.ServerHandler.ServerHandler;
@@ -19,9 +21,10 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.AttributeKey;
 
-public class NettyStart {
+public class NettyStart implements Runnable {
 	private int port;
 	public final static AttributeKey<GprsAttribute> GPRS = AttributeKey.valueOf("GprsAttribute");
+	private static Logger logger = Logger.getLogger(NettyStart.class);
 	
 	public int getPort() {
 		return port;
@@ -31,7 +34,7 @@ public class NettyStart {
 		this.port = port;
 	}
 
-	public void start() throws Exception{
+	public void run(){
 		EventLoopGroup bossGroup=new NioEventLoopGroup();
 		EventLoopGroup workGroup=new NioEventLoopGroup();
 		
@@ -60,7 +63,12 @@ public class NettyStart {
 			future.channel().closeFuture().sync();
 			
 			
-		} finally {
+		}catch(Exception ex) {
+			logger.error("NETTY START",ex);
+			
+		}
+		finally {
+		}
 			// TODO: handle finally clause
 			workGroup.shutdownGracefully();
 			bossGroup.shutdownGracefully();
@@ -68,4 +76,3 @@ public class NettyStart {
 		
 	}
 
-}

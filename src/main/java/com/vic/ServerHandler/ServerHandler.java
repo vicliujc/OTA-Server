@@ -27,6 +27,11 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 				System.out.print(" "+ Integer.toHexString(b&(int)0xff));
 			}
 	        System.out.print("\r\n");
+	        
+	        if (Protocol.isSubcontactRequesAns(req)) {
+				
+			}
+	        
 		 }catch (Exception e) {
 			// TODO: handle exception
 			 e.printStackTrace();

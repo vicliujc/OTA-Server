@@ -1,5 +1,12 @@
 package com.vic.mybatis;
 
+
+import java.util.Arrays;
+
+import org.apache.ibatis.reflection.ArrayUtil;
+
+import com.vic.util.MyUtil;
+
 public class OTAMsg {
 	private int id ;
 	private String gprs_id;
@@ -65,6 +72,17 @@ public class OTAMsg {
 	}
 	public void setSlave_indexes(String slave_indexes) {
 		this.slave_indexes = slave_indexes;
+	}
+	public byte[] getSub() {
+		int ansInt=0;
+		byte[] ans=new byte[3];
+		String[] sub=slave_indexes.split("-");
+		for (String subnum : sub) {
+			ansInt += Math.pow(2, Integer.parseInt(subnum)-1);
+		}
+		byte[] x=MyUtil.reverse( MyUtil.intTobyteArray(ansInt));
+		System.arraycopy(x, 0, ans, 0, 3);
+		return ans;
 	}
 	@Override
 	public String toString() {

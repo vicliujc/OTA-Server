@@ -48,4 +48,6 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
    <bean id="otaDao" class="com.vic.mybatis.OTADao">
       <property name="sessionTemplate" ref="sqlSessionTemplate"/>
    </bean>
+   <bean id="protocol" class="com.vic.OTAServer.OTA_Server.Protocol">
+   </bean>
 </beans>

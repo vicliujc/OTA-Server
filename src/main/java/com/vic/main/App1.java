@@ -19,9 +19,9 @@ public class App1 {
 		// TODO Auto-generated method stub
 		try {
 			//ApplicationContext ac=new ClassPathXmlApplicationContext("com/vic/main/beans.xml");
-			new sqlStart().test();
+		    
 			NettyStart nettyStart=(NettyStart) ac.getBean("nettyStart");
-			nettyStart.start();
+			new Thread(nettyStart).start();
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

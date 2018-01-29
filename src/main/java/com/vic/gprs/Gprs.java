@@ -23,5 +23,9 @@ public class Gprs {
 	public static void remove(String id) {
 		onlineGprs.remove(id);
 	}
+	
+	public static ChannelHandlerContext getCTX(String id) {
+		return onlineGprs.get(id);
+	}
 
 }

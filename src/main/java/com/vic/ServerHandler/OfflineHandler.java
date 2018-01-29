@@ -28,8 +28,8 @@ public class OfflineHandler extends ChannelInboundHandlerAdapter {
 		try {
 			if (!Gprs.getOnlineGprs().containsKey( ctx.channel().attr(NettyStart.GPRS).get().getGprs()))
                 return;
-			if(Gprs.getOnlineGprs().get( ctx.channel().attr(NettyStart.GPRS).get().getGprs()).channel().id()
-					==ctx.channel().id()) {
+			if(Gprs.getOnlineGprs().get( ctx.channel().attr(NettyStart.GPRS).get().getGprs()).channel().id().asLongText()
+					==ctx.channel().id().asLongText()) {
 				//System.out.println(Gprs.getOnlineGprs().containsKey(ctx.channel().attr(NettyStart.GPRS).get().getGprs()));
 				Gprs.remove(ctx.channel().attr(NettyStart.GPRS).get().getGprs());
 				//System.out.println(Gprs.getOnlineGprs().containsKey(ctx.channel().attr(NettyStart.GPRS).get().getGprs()));

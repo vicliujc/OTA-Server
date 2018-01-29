@@ -5,6 +5,11 @@ import com.vic.util.*;
 public class Protocol {
 	private static final int MIN_FRAME_LENGHT = 11;
 	
+	/***
+	 * 从上传数据中获得GprsID
+	 * @param msg
+	 * @return
+	 */
 	public static String getGprsId(byte[] msg) {
 		if (msg.length<MIN_FRAME_LENGHT) {
 			return null;
@@ -19,6 +24,83 @@ public class Protocol {
 		return gprsId;
 	}
 	
+	/***
+	 *添加表头、数据长度、异或
+	 * @return
+	 */
+	public static byte[] fullSend(byte[] data) {
+		byte[] head= {(byte) 0xf7,0x7f};
+		byte[] length = { (byte) (data.length+1)};
+		if (data.length>254) length[0]= 0x00;
+		byte[] allMsg=new byte[data.length+4];
+		byte bbc=0x00;
+		System.arraycopy(head, 0, allMsg, 0, 2);
+		System.arraycopy(length, 0, allMsg, 2, 1);
+		System.arraycopy(data, 0, allMsg, 3, data.length);
+		for (int i = 0; i < allMsg.length; i++) {
+			bbc ^= allMsg[i];
+		}
+		allMsg[allMsg.length-1]=bbc;
+		return allMsg;
+	}
+	
+	/***
+	 * 分包请求数据帧
+	 * @param docLength
+	 * @param num
+	 * @param object
+	 * @param fimwareType
+	 * @param version
+	 * @param subnum
+	 * @return
+	 */
+	public static byte[] subcontractRequest(int docLength,int num,byte object,byte fimwareType ,byte version,byte[] subnum) {
+		byte[] head= {(byte) 0xf2,0x20};
+		byte[] length=MyUtil.intTobyteArray(docLength);
+		byte[] packNum= { MyUtil.intTobyteArray(docLength)[2],MyUtil.intTobyteArray(docLength)[3]};
+		byte[] ver= {object,fimwareType,version};
+		byte[] allMsg=new byte[14];
+		System.arraycopy(head, 0, allMsg, 0, 2);
+		System.arraycopy(length, 0, allMsg, 2, 4);
+		System.arraycopy(packNum, 0, allMsg, 6, 2);
+		System.arraycopy(ver, 0, allMsg, 8, 3);
+		System.arraycopy(subnum, 0, allMsg, 11, 3);
+		return fullSend(allMsg);
+	}
+	
+	public static boolean isSubcontactRequesAns(byte[] data) 
+	{
+		return  data[10] == (byte)0xf2;
+	}
+	
+	/***
+	 * 分包数据
+	 * @param data
+	 * @return
+	 */
+	public static byte[] subcontractMsg(byte[] data) {
+		byte[] dataLength=new byte[2];
+		
+		byte[] crc=CRC16.calculate(data);
+		if(data.length>253) 
+		{
+		    dataLength[0] = MyUtil.intTobyteArray(data.length+4)[2] ;
+	     	dataLength[1] = MyUtil.intTobyteArray(data.length+4)[3] ;
+		    byte[] allMsg=new byte[data.length+5];
+	    	allMsg[0]=(byte) 0xf3;
+	    	System.arraycopy(dataLength, 0, allMsg, 1, 2);
+	    	System.arraycopy(data, 0, allMsg, 3, data.length);
+		    System.arraycopy(crc, 0, allMsg, data.length+3, 2);
+		    return fullSend(allMsg);
+		}
+		else {
+			byte[] allMsg=new byte[data.length+3];
+			allMsg[0]=(byte) 0xf3;
+			System.arraycopy(data, 0, allMsg, 1, data.length);
+			System.arraycopy(crc, 0, allMsg, data.length+1, 2);
+			return fullSend(allMsg);
+		}
+	}
 	 
 
 }
