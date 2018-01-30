@@ -3,14 +3,19 @@ package com.vic.OTAServer.OTA_Server;
 import org.apache.log4j.Logger;
 import org.apache.log4j.chainsaw.Main;
 import org.omg.CORBA.PUBLIC_MEMBER;
+import org.springframework.context.ApplicationContext;
 
 import com.vic.gprs.Gprs;
+import com.vic.main.App1;
+import com.vic.mybatis.OTADao;
 import com.vic.mybatis.OTAMsg;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 
 public class OtaServer implements Runnable{
+	ApplicationContext ac=App1.ac;
+	
 	public static int UNPACK_FRAME_LENGTH;//不含bbc crc校验 表头长度
 	public int  packNum;
 	public static Logger logger=Logger.getLogger(OtaServer.class);
@@ -68,11 +73,16 @@ public class OtaServer implements Runnable{
 	
 	
     public void run() {
+    	ApplicationContext ac=App1.ac;
     	//先发分包请求
     	try {
     	byte[] subcontact=Protocol.subcontractRequest(doc.length, packNum,(byte)otaMsg.gettarget(), (byte) otaMsg.getFirmware(), (byte) otaMsg.getVersion(), otaMsg.getSub());
     	ChannelHandlerContext ctx=Gprs.getCTX(otaMsg.getGprs_id());
     	ctx.write(Unpooled.copiedBuffer(subcontact));
+    	OTADao otaDao=(OTADao) ac.getBean("otaDao");
+    	otaMsg.setState(1);
+    	otaMsg.setResult_info("发送分包请求");
+    	otaDao.changeChansferStatus(otaMsg);
     	}
     	catch (Exception e) {
 			logger.error("OtaServer run", e);// TODO: handle exception

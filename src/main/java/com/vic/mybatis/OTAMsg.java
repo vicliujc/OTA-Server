@@ -15,7 +15,27 @@ public class OTAMsg {
 	private int firmware;
 	private int version;
 	private String slave_indexes;
+	private String result_info;
+	private int state;
 	
+	public int getState() {
+		return state;
+	}
+	public void setState(int state) {
+		this.state = state;
+	}
+	public int getTarget() {
+		return target;
+	}
+	public void setTarget(int target) {
+		this.target = target;
+	}
+	public String getResult_info() {
+		return result_info;
+	}
+	public void setResult_info(String result_info) {
+		this.result_info = result_info;
+	}
 	//构造器 setget toString
 	public OTAMsg() {
 		

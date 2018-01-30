@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.vic.mybatis.OTADao;
 import com.vic.mybatis.sqlStart;
 
 public class App1 {
@@ -19,9 +20,11 @@ public class App1 {
 		// TODO Auto-generated method stub
 		try {
 			//ApplicationContext ac=new ClassPathXmlApplicationContext("com/vic/main/beans.xml");
-		    
+		    OTADao otaDao =(OTADao) ac.getBean("otaDao");
+		    otaDao.initializeStatus();
 			NettyStart nettyStart=(NettyStart) ac.getBean("nettyStart");
 			new Thread(nettyStart).start();
+			
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

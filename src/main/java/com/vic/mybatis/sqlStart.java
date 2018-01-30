@@ -1,6 +1,8 @@
 package com.vic.mybatis;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.context.ApplicationContext;
 
@@ -12,7 +14,7 @@ import org.apache.log4j.Logger;
 import  org.junit.Test; 
 
 public class sqlStart implements Runnable{
-    
+    private static final int OTA_START_NUM=10;
 	ApplicationContext ac=com.vic.main.App1.ac;
 	 
 //	@Test
@@ -27,29 +29,31 @@ public class sqlStart implements Runnable{
 	public void run(){
 		// TODO Auto-generated method stub
 			try {
+				ExecutorService threadPool=Executors.newFixedThreadPool(OTA_START_NUM);
+				
 				while(true) {
+					
 					Thread.sleep(10000);
-					PollingInstruction pollingInstruction=new PollingInstruction();
-					List<OTAMsg> OTAObjects;
+					PollingInstruction pollingInstruction;
+					//开始OTA
 					try {
-					OTAObjects=pollingInstruction.findOTA();
-				    if(!OTAObjects.isEmpty()) {
-				    	for(OTAMsg otaObject:OTAObjects) {
-				    	OtaServer otaServer=new OtaServer(otaObject);
-				    	new Thread(otaServer).start();
+						pollingInstruction=new PollingInstruction();
+						List<OTAMsg> OTAObjects;
+					    OTAObjects=pollingInstruction.findOTA();
+				        if(!OTAObjects.isEmpty()) {
+				    	  for(OTAMsg otaObject:OTAObjects) {
+				    	  OtaServer otaServer=new OtaServer(otaObject);
+				    	  threadPool.submit(otaServer);
+				    	  new Thread(otaServer).start();
 				    	}
 				    }
-					
-					
-					
-					
-					
-					
 					}
 					catch(Exception x) 
 					{
 					logger.error("Exception",x);
 					}
+					
+					
 				
 				}
 			} catch (InterruptedException e) {

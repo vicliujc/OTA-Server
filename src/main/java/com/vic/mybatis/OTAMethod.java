@@ -6,6 +6,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository 
 public interface OTAMethod {
+	public void initializeStatus();
+	
 	public List<OTAMsg> otaSelect();
+	
+	public void transferStatus(OTAMsg otaMsg);
+	
+	public void changeChansferStatus(OTAMsg otaMsg);
 
 }
