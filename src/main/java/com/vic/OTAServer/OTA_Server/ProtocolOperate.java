@@ -1,7 +1,17 @@
 package com.vic.OTAServer.OTA_Server;
 
+import com.vic.gprs.OTAMap;
+import com.vic.gprs.OTATask;
+import com.vic.main.App1;
+import com.vic.mybatis.OTADao;
+import com.vic.mybatis.OTAMsg;
+import com.vic.mybatis.SqlMsg;
+
+import ErrorLogger.ErrorLog;
+
 public class ProtocolOperate {
 	static final int MAX_SUBRQSANS=10;
+	
 	
 	/***
 	 * 区分传入数据类型 
@@ -29,16 +39,32 @@ public class ProtocolOperate {
 	public static void  subcontactRequestAns(byte[] msg) {
 		switch (msg[11]) {
 		case (byte)0x80:
-			subcontactRequestAnsSuccess(msg);
+			try {
+				subcontactRequestAnsSuccess(msg);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				ErrorLog.errorWrite("分析分包请求", e);
+			}
 			break;
 		default:
-			subcontactRequestAnsFail(msg);
+			try {
+				subcontactRequestAnsFail(msg);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				ErrorLog.errorWrite("分析分包请求", e);
+			}
 			return;
 		}
 	}
 	
-	public static void subcontactRequestAnsSuccess(byte[] msg) {
-		
+	/***
+	 * 分包请求通过 开始传包
+	 * @param msg
+	 * @throws Exception
+	 */
+	public static void subcontactRequestAnsSuccess(byte[] msg) throws Exception{
+		String gprsid=Protocol.getGprsId(msg);
+		OTATask.get(gprsid).send(true);
 	}
 	
 	/***
@@ -51,7 +77,7 @@ public class ProtocolOperate {
     83H：版本错误
 	 * @param msg
 	 */
-	public static void subcontactRequestAnsFail(byte[] msg) {
+	public static void subcontactRequestAnsFail(byte[] msg) throws Exception{
 		String errorMsg;
 		switch (msg[11]) {
            case (byte)0x01:
@@ -76,8 +102,12 @@ public class ProtocolOperate {
 			   errorMsg="未知错误："+msg[11];
 			break;
 		}
-		
-		
+		String gprsid=Protocol.getGprsId(msg);
+		SqlMsg sqlMsg=OTAMap.get(gprsid);
+		sqlMsg.setState(3);
+		sqlMsg.setResult_info("分包请求失败："+errorMsg);
+		OTADao otaDao=(OTADao) App1.ac.getBean("otaDao");
+		otaDao.transferStatus(sqlMsg);
 	}
 
 }

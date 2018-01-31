@@ -8,12 +8,13 @@ import org.springframework.context.ApplicationContext;
 
 import com.vic.OTAServer.OTA_Server.DocRead;
 import com.vic.OTAServer.OTA_Server.OtaServer;
+import com.vic.gprs.OTATask;
 import com.vic.main.App1;
 
 import org.apache.log4j.Logger;
 import  org.junit.Test; 
 
-public class sqlStart implements Runnable{
+public class SqlStart implements Runnable{
     private static final int OTA_START_NUM=10;
 	ApplicationContext ac=com.vic.main.App1.ac;
 	 
@@ -44,6 +45,7 @@ public class sqlStart implements Runnable{
 				    	  for(OTAMsg otaObject:OTAObjects) {
 				    	  OtaServer otaServer=new OtaServer(otaObject);
 				    	  threadPool.submit(otaServer);
+				    	  OTATask.put(otaObject.getGprs_id(), otaServer);
 				    	  new Thread(otaServer).start();
 				    	}
 				    }

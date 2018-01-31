@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.vic.mybatis.OTADao;
-import com.vic.mybatis.sqlStart;
+import com.vic.mybatis.SqlStart;
 
 public class App1 {
 	private static Logger logger = Logger.getLogger(App1.class);

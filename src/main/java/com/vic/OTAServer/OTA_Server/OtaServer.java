@@ -1,22 +1,28 @@
 package com.vic.OTAServer.OTA_Server;
 
+import java.nio.file.attribute.FileTime;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.chainsaw.Main;
 import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.context.ApplicationContext;
 
 import com.vic.gprs.Gprs;
+import com.vic.gprs.OTAMap;
 import com.vic.main.App1;
 import com.vic.mybatis.OTADao;
 import com.vic.mybatis.OTAMsg;
+import com.vic.mybatis.SqlExecute;
+import com.vic.mybatis.SqlMsg;
 
+import ErrorLogger.ErrorLog;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 
 public class OtaServer implements Runnable{
 	ApplicationContext ac=App1.ac;
 	
-	public static int UNPACK_FRAME_LENGTH;//不含bbc crc校验 表头长度
+	public static int UNPACK_FRAME_LENGTH=514;//不含bbc crc校验 表头长度
 	public int  packNum;
 	public static Logger logger=Logger.getLogger(OtaServer.class);
 	// 读取文件后的全部byte[] 
@@ -25,6 +31,8 @@ public class OtaServer implements Runnable{
 	
 	private String path;
 	private int now_pack_num;
+	
+	private int failTime=0;
 	
 	public OtaServer(OTAMsg otaMsg) {
 		this.path=otaMsg.getBin_file_path();
@@ -50,7 +58,7 @@ public class OtaServer implements Runnable{
 		packNum=(int) Math.ceil( (double)doc.length/UNPACK_FRAME_LENGTH);
 	}
 	
-	//读取包
+	//读取包数量
 	public int getPackNum() {
 		double x=(double)(doc.length)/UNPACK_FRAME_LENGTH;
 		packNum=(int) Math.ceil(x);
@@ -58,7 +66,7 @@ public class OtaServer implements Runnable{
 	}
 	
 	/***
-	 * 输入需要的包数 传出包
+	 * 输入需要的包数 传出第num包
 	 * @param num
 	 * @return
 	 * @throws Exception
@@ -68,10 +76,12 @@ public class OtaServer implements Runnable{
 		if (doc.length==0) throw new Exception("未传入文件");
 	    byte[] now_pack=new byte[UNPACK_FRAME_LENGTH];
 	    System.arraycopy(doc, UNPACK_FRAME_LENGTH*(num-1), now_pack, 0, UNPACK_FRAME_LENGTH);
-	    return now_pack;
+	    return Protocol.subcontractMsg(now_pack);
 	} 
 	
-	
+	/***
+	 * 发送分包请求 插入sql发送队列
+	 */
     public void run() {
     	ApplicationContext ac=App1.ac;
     	//先发分包请求
@@ -80,13 +90,63 @@ public class OtaServer implements Runnable{
     	ChannelHandlerContext ctx=Gprs.getCTX(otaMsg.getGprs_id());
     	ctx.write(Unpooled.copiedBuffer(subcontact));
     	OTADao otaDao=(OTADao) ac.getBean("otaDao");
-    	otaMsg.setState(1);
-    	otaMsg.setResult_info("发送分包请求");
-    	otaDao.changeChansferStatus(otaMsg);
+    	SqlMsg sqlMsg=(SqlMsg) ac.getBean("sqlMsg");
+    	sqlMsg.setId(otaMsg.getId());
+    	sqlMsg.setResult_info("已发送分包请求");
+    	sqlMsg.setState(1);
+    	SqlExecute.put(sqlMsg);
+    	OTAMap.put(otaMsg.getGprs_id(), sqlMsg);
+    	now_pack_num=0;
+    	
     	}
     	catch (Exception e) {
 			logger.error("OtaServer run", e);// TODO: handle exception
+			e.printStackTrace();
 		}
+    }
+    
+    /***
+     * 输入上一次的传输情况 成功now_pack_num+1 失败不变 传输第now_pack_num包
+     * @param ans
+     */
+    public void send(boolean ans) {
+    	try {
+    		if (failTime>3) {
+    			SqlMsg sqlMsg=OTAMap.get(otaMsg.getGprs_id());
+    	    	sqlMsg.setState(3);
+    			statewrite("第"+now_pack_num+"包传输失败超过3次");
+				return ;
+			}
+    		if (ans) {
+    			now_pack_num += 1;
+    			failTime=0;
+			}
+    		else {
+				failTime ++;
+			}
+    		if (now_pack_num>packNum) {
+    			statewrite("所有分包已经发送完毕");
+        		return;
+        	}
+    		byte[] transforPack=tanceforByteNow(now_pack_num);
+    		Gprs.getCTX(otaMsg.getGprs_id()).write(Unpooled.copiedBuffer(transforPack));
+    		statewrite("已发送："+now_pack_num+"/"+packNum);
+    		
+		} catch (Exception e) {
+			// TODO: handle exception
+			ErrorLog.errorWrite("发包", e);
+		}
+    }
+    
+    /***
+     * 插入数据库result_info
+     * @throws Exception 
+     */
+    public void statewrite(String msg) throws InterruptedException {
+    	OTADao otaDao=(OTADao) App1.ac.getBean("otaDao");
+    	SqlMsg sqlMsg=OTAMap.get(otaMsg.getGprs_id());
+    	sqlMsg.setResult_info(msg);
+    	SqlExecute.put(sqlMsg);
     }
 
 

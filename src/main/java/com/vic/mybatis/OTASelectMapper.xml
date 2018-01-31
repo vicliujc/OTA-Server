@@ -15,15 +15,11 @@
       <result property="slave_indexes" column="slave_indexes"></result>
     </resultMap>
     
-    <select id="transferStatus" parameterType="com.vic.mybatis.OTAMsg" >
-      UPDATE ota_send SET result_info=#{result_info} where id=#{id};
+    <select id="transferStatus" parameterType="com.vic.mybatis.SqlMsg" >
+      UPDATE ota_send SET result_info=#{result_info} , send_done=#{state} where id=#{id};
     </select>
     
     <select id="initializeStatus" parameterType="int">
        UPDATE rcv_gprs_list SET link_status=0 where port=#{port};
-    </select>
-    
-    <select id="changeChansferStatus" parameterType="com.vic.mybatis.OTAMsg">
-        UPDATE ota_send SET send_done=#{state} where id=#{id};
     </select>
 </mapper>

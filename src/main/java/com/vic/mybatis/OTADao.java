@@ -28,12 +28,12 @@ public class OTADao implements OTAMethod{
 	}
 
 	/***
-	 * 数据传输过程中 状态更新
+	 * 数据传输过程中 状态更新 result_info send_done
 	 */
-	public void transferStatus(OTAMsg otaMsg) {
+	public void transferStatus(SqlMsg sqlMsg) {
 		// TODO Auto-generated method stub
 		String statement="com.vic.mybatis.OTAMethod.transferStatus";
-		sessionTemplate.update(statement, otaMsg);
+		sessionTemplate.update(statement, sqlMsg);
 	}
      
 	/***
@@ -45,13 +45,9 @@ public class OTADao implements OTAMethod{
 		sessionTemplate.update(statement, port);
 	}
 	
-	/***
-	 * 
-	 */
-    public void changeChansferStatus(OTAMsg otaMsg) {
-    	String statement="com.vic.mybatis.OTAMethod.initializeStatus";
-		sessionTemplate.update(statement, otaMsg.getState());
-    }
+	
+	
+}
 	
 
-}
+

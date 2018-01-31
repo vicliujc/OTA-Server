@@ -1,32 +1,39 @@
 package com.vic.mybatis;
 
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
-public class sqlExecute implements Runnable {
+import org.springframework.context.ApplicationContext;
+
+import com.vic.main.App1;
+
+import ErrorLogger.ErrorLog;
+
+public class SqlExecute implements Runnable {
+	private static final LinkedBlockingQueue<SqlMsg> changeStatusQueue=new LinkedBlockingQueue<SqlMsg>();
 	
-    public static final ConcurrentHashMap<OTAMsg,Integer> sqlExecuteQueue =new ConcurrentHashMap<OTAMsg, Integer>();
-	
+	ApplicationContext ac=App1.ac;
+	public static void put(SqlMsg sqlMsg) throws InterruptedException {
+		changeStatusQueue.put(sqlMsg);
+	}
+
 	public void run() {
+		OTADao otaDao;
+		try {
+			otaDao=(OTADao) ac.getBean("otaDao");
 		// TODO Auto-generated method stub
 		while(true) {
-			OTAMsg otaMsg;
-			int type;
-			if (sqlExecuteQueue.isEmpty()) {
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				continue;
+			try {
+				SqlMsg sqlMsg=changeStatusQueue.take();
+				otaDao.transferStatus(sqlMsg);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				ErrorLog.errorWrite("插入队列", e);
 			}
-			synchronized(sqlExecuteQueue) {
-				
-			}
-			
-			
-			
+		}
+		} catch (Exception e) {
+			// TODO: handle exception
+			ErrorLog.errorWrite("创建OTADAO", e);
 		}
 
 	}

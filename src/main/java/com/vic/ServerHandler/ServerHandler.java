@@ -26,7 +26,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 	        byte[] req=new byte[buf.readableBytes()];
 	        buf.readBytes(req);
 	        
-	        ProtocolOperate.operate(req);
+	        ProtocolOperate.operate(req);		
 	        
 	        System.out.print(new Date().toLocaleString()+"  "+Protocol.getGprsId(req));
 	        for (byte b : req) {
