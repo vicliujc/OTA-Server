@@ -15,11 +15,12 @@
       <result property="slave_indexes" column="slave_indexes"></result>
     </resultMap>
     
-    <select id="transferStatus" parameterType="com.vic.mybatis.SqlMsg" >
+    <update id="transferStatus" parameterType="com.vic.mybatis.SqlMsg" >
       UPDATE ota_send SET result_info=#{result_info} , send_done=#{state} where id=#{id};
-    </select>
+    </update>
     
-    <select id="initializeStatus" parameterType="int">
+    <update id="initializeStatus" parameterType="int">
        UPDATE rcv_gprs_list SET link_status=0 where port=#{port};
-    </select>
+       UPDATE ota_send SET send_done=7, result_info='升级过程重启程序' where send_done=1;
+    </update>
 </mapper>

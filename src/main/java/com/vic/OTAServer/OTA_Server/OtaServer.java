@@ -1,6 +1,7 @@
 package com.vic.OTAServer.OTA_Server;
 
 import java.nio.file.attribute.FileTime;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.chainsaw.Main;
@@ -9,6 +10,8 @@ import org.springframework.context.ApplicationContext;
 
 import com.vic.gprs.Gprs;
 import com.vic.gprs.OTAMap;
+import com.vic.gprs.OTATask;
+import com.vic.gprs.OTATimeOut;
 import com.vic.main.App1;
 import com.vic.mybatis.OTADao;
 import com.vic.mybatis.OTAMsg;
@@ -101,6 +104,7 @@ public class OtaServer implements Runnable{
     	sqlMsg.setState(1);
     	SqlExecute.put(sqlMsg);
     	OTAMap.put(otaMsg.getGprs_id(), sqlMsg);
+    	OTATimeOut.put(otaMsg.getGprs_id(), new Date());
     	now_pack_num=0;
     	
     	}
@@ -116,10 +120,10 @@ public class OtaServer implements Runnable{
      */
     public void send(boolean ans) {
     	try {
-    		if (failTime>3) {
+    		if (failTime>5) {
     			SqlMsg sqlMsg=OTAMap.get(otaMsg.getGprs_id());
     	    	sqlMsg.setState(3);
-    			statewrite("第"+now_pack_num+"包传输失败超过3次");
+    			statewrite("第"+now_pack_num+"包传输失败超过5次");
 				return ;
 			}
     		if (ans) {
@@ -155,6 +159,8 @@ public class OtaServer implements Runnable{
     	sqlMsg.setResult_info(msg);
     	SqlExecute.put(sqlMsg);
     }
+    
+    
 
 
 }
