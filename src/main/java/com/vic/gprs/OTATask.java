@@ -19,5 +19,9 @@ public class OTATask {
 	public static OtaServer get(String gprsid) {
 	    return	OTADATA.get(gprsid);
 	}
+	
+	public static int size() {
+		return OTADATA.size();
+	}
 
 }

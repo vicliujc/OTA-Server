@@ -31,13 +31,15 @@ public class SqlStart implements Runnable{
 		// TODO Auto-generated method stub
 			try {
 				ExecutorService threadPool=Executors.newFixedThreadPool(OTA_START_NUM);
-				
+				SqlExecute sqlExecute=(SqlExecute) ac.getBean("sqlExecute");
+				new Thread(sqlExecute).start();
 				while(true) {
 					
 					Thread.sleep(10000);
 					PollingInstruction pollingInstruction;
 					//开始OTA
 					try {
+						
 						pollingInstruction=new PollingInstruction();
 						List<OTAMsg> OTAObjects;
 					    OTAObjects=pollingInstruction.findOTA();

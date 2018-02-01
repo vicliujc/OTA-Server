@@ -24,6 +24,16 @@ public class Protocol {
 		return gprsId;
 	}
 	
+	public static boolean isRealData(byte[] data) {
+		
+		byte bbc=0x00;
+		for (int i = 0; i < data.length-1; i++) {
+			bbc ^= (byte)data[i];
+		}
+		
+		return (byte)bbc==(byte)data[data.length-1];
+	}
+	
 	/***
 	 *添加表头、数据长度、异或
 	 * @return

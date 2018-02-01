@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vic.mybatis.OTAMethod">
-    <select id="otaSelect" resultMap="selectMap">
-     select id,gprs_id,target,bin_file_path,firmware,version,slave_indexes FROM ota_send WHERE send_done=0;
+    <select id="otaSelect" parameterType="int" resultMap="selectMap">
+     select id,gprs_id,target,bin_file_path,firmware,version,slave_indexes FROM ota_send WHERE send_done=0 LIMIT #{number};
     </select>
     <resultMap id="selectMap" type="com.vic.mybatis.OTAMsg">
       <id property="id" column="id"></id>

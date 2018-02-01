@@ -25,15 +25,17 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 	        ByteBuf buf=(ByteBuf) msg;
 	        byte[] req=new byte[buf.readableBytes()];
 	        buf.readBytes(req);
-	        
-	        ProtocolOperate.operate(req);		
-	        
+	        boolean ansIsReal=Protocol.isRealData(req);
 	        System.out.print(new Date().toLocaleString()+"  "+Protocol.getGprsId(req));
+            if (!ansIsReal) {
+            	 System.out.print(" 未知数据  ");
+			}
 	        for (byte b : req) {
 				System.out.print(" "+ Integer.toHexString(b&(int)0xff));
 			}
 	        System.out.print("\r\n");
-	        
+	        if(ansIsReal)
+	        ProtocolOperate.distributionDataThread(req);
 	        
 		 }catch (Exception e) {
 			// TODO: handle exception

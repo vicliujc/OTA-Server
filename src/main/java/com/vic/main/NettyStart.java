@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import com.vic.ServerHandler.OfflineHandler;
 import com.vic.ServerHandler.Register;
 import com.vic.ServerHandler.ServerHandler;
+import com.vic.ServerHandler.OutHandler;
 import com.vic.gprs.GprsAttribute;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -49,6 +50,7 @@ public class NettyStart implements Runnable {
             	@Override
             	public void initChannel(Channel ch) throws Exception{
             		ChannelPipeline p=ch.pipeline();
+            		p.addLast("outHandler",new OutHandler());
             		p.addLast(new IdleStateHandler(1,0, 0,TimeUnit.MINUTES));
             		p.addLast("Register",new Register());
             		p.addLast(new ServerHandler());

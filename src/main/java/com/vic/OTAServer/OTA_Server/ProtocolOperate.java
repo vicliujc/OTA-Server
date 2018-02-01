@@ -1,5 +1,8 @@
 package com.vic.OTAServer.OTA_Server;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.log4j.Logger;
 
 import com.vic.gprs.OTAMap;
@@ -13,7 +16,20 @@ import com.vic.mybatis.SqlMsg;
 import ErrorLogger.ErrorLog;
 
 public class ProtocolOperate {
-	static final int MAX_SUBRQSANS=10;
+	private static final int MAX_DATAPROCESSING_NUM=10;
+	
+	/***
+	 * 创建线程处理传入数据
+	 */
+	public static void distributionDataThread(byte[] msg) {
+		try {
+			ExecutorService servicePool = Executors.newFixedThreadPool(MAX_DATAPROCESSING_NUM);
+			DataProcessingThread dataProcessingThread=new DataProcessingThread(msg);
+			servicePool.submit(dataProcessingThread);
+		} catch (Exception e) {
+			ErrorLog.errorWrite("数据处理创建线程", e);
+		}
+	}
 	
 	
 	/***

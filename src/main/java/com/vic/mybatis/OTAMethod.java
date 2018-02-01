@@ -9,7 +9,7 @@ public interface OTAMethod {
 	
 	public void initializeStatus();
 	
-	public List<OTAMsg> otaSelect();
+	public List<OTAMsg> otaSelect(int number);
 	
 	public void transferStatus(SqlMsg sqlMsg);
 }

@@ -21,10 +21,10 @@ public class OTADao implements OTAMethod{
 	/***
 	 * 获得需要更新的列表
 	 */
-	public List<OTAMsg> otaSelect() {
+	public List<OTAMsg> otaSelect(int number) {
 		// TODO Auto-generated method stub
 		String statement="com.vic.mybatis.OTAMethod.otaSelect";
-		return sessionTemplate.selectList(statement);
+		return sessionTemplate.selectList(statement,number);
 	}
 
 	/***

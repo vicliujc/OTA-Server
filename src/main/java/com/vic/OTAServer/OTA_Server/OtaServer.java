@@ -96,7 +96,7 @@ public class OtaServer implements Runnable{
     	try {
     	byte[] subcontact=Protocol.subcontractRequest(doc.length, packNum,(byte)otaMsg.gettarget(), (byte) otaMsg.getFirmware(), (byte) otaMsg.getVersion(), otaMsg.getSub());
     	ChannelHandlerContext ctx=Gprs.getCTX(otaMsg.getGprs_id());
-    	ctx.write(Unpooled.copiedBuffer(subcontact));
+    	ctx.writeAndFlush(Unpooled.copiedBuffer(subcontact));
     	OTADao otaDao=(OTADao) ac.getBean("otaDao");
     	SqlMsg sqlMsg=(SqlMsg) ac.getBean("sqlMsg");
     	sqlMsg.setId(otaMsg.getId());
@@ -140,7 +140,7 @@ public class OtaServer implements Runnable{
         		return;
         	}
     		byte[] transforPack=tanceforByteNow(now_pack_num);
-    		Gprs.getCTX(otaMsg.getGprs_id()).write(Unpooled.copiedBuffer(transforPack));
+    		Gprs.getCTX(otaMsg.getGprs_id()).writeAndFlush(Unpooled.copiedBuffer(transforPack));
     		statewrite("已发送："+now_pack_num+"/"+packNum);
     		
 		} catch (Exception e) {
