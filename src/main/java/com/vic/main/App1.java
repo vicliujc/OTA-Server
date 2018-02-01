@@ -24,7 +24,8 @@ public class App1 {
 		    otaDao.initializeStatus();
 			NettyStart nettyStart=(NettyStart) ac.getBean("nettyStart");
 			new Thread(nettyStart).start();
-			
+			SqlStart sqlStart=new SqlStart();
+			new Thread(sqlStart).start();
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();

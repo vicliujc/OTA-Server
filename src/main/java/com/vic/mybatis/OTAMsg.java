@@ -36,21 +36,18 @@ public class OTAMsg {
 	public void setResult_info(String result_info) {
 		this.result_info = result_info;
 	}
-	//构造器 setget toString
-	public OTAMsg() {
-		
-	}
-	public OTAMsg(int id, String gprs_id, int target, String bin_file_path, int firmware, int version,
-			String slave_indexes) {
-		super();
-		this.id = id;
-		this.gprs_id = gprs_id;
-		this.target = target;
-		this.bin_file_path = bin_file_path;
-		this.firmware = firmware;
-		this.version = version;
-		this.slave_indexes = slave_indexes;
-	}
+
+//	public OTAMsg(int id, String gprs_id, int target, String bin_file_path, int firmware, int version,
+//			String slave_indexes) {
+//		
+//		this.id = id;
+//		this.gprs_id = gprs_id;
+//		this.target = target;
+//		this.bin_file_path = bin_file_path;
+//		this.firmware = firmware;
+//		this.version = version;
+//		this.slave_indexes = slave_indexes;
+//	}
 	public int getId() {
 		return id;
 	}
@@ -63,12 +60,7 @@ public class OTAMsg {
 	public void setGprs_id(String gprs_id) {
 		this.gprs_id = gprs_id;
 	}
-	public int gettarget() {
-		return target;
-	}
-	public void settarget(int target) {
-		this.target = target;
-	}
+	
 	public String getBin_file_path() {
 		return bin_file_path;
 	}

@@ -51,7 +51,7 @@ public class NettyStart implements Runnable {
             	public void initChannel(Channel ch) throws Exception{
             		ChannelPipeline p=ch.pipeline();
             		p.addLast("outHandler",new OutHandler());
-            		p.addLast(new IdleStateHandler(1,0, 0,TimeUnit.MINUTES));
+            		p.addLast(new IdleStateHandler(30,0, 0,TimeUnit.MINUTES));
             		p.addLast("Register",new Register());
             		p.addLast(new ServerHandler());
             		p.addLast(new OfflineHandler());

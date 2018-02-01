@@ -54,6 +54,7 @@ public class SqlStart implements Runnable{
 					}
 					catch(Exception x) 
 					{
+						x.printStackTrace();
 					logger.error("Exception",x);
 					}
 					

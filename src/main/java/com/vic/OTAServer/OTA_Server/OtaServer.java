@@ -43,6 +43,7 @@ public class OtaServer implements Runnable{
 	
 	
 	public OtaServer(OTAMsg otaMsg) {
+		this.otaMsg=otaMsg;
 		this.path=otaMsg.getBin_file_path();
 		try {
 			getDocNow();
@@ -94,7 +95,7 @@ public class OtaServer implements Runnable{
     	ApplicationContext ac=App1.ac;
     	//先发分包请求
     	try {
-    	byte[] subcontact=Protocol.subcontractRequest(doc.length, packNum,(byte)otaMsg.gettarget(), (byte) otaMsg.getFirmware(), (byte) otaMsg.getVersion(), otaMsg.getSub());
+    	byte[] subcontact=Protocol.subcontractRequest(doc.length, packNum,(byte)otaMsg.getTarget(), (byte) otaMsg.getFirmware(), (byte) otaMsg.getVersion(), otaMsg.getSub());
     	ChannelHandlerContext ctx=Gprs.getCTX(otaMsg.getGprs_id());
     	ctx.writeAndFlush(Unpooled.copiedBuffer(subcontact));
     	OTADao otaDao=(OTADao) ac.getBean("otaDao");
