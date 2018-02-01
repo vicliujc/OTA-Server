@@ -18,18 +18,24 @@ public class ProtocolOperate {
 	 * @param Msg
 	 */
 	public static void operate(byte[] msg) {
-		if (msg[2] == (byte)0xF1) {
-		     switch (msg[10]) {
-		        case (byte) 0xF2:
-			       subcontactRequestAns(msg);
-			       break;
-                case (byte) 0xF3:
-			
-		    	   break;
-		        default:
-			       break;
-		     }
+		try {
+			if (msg[2] == (byte)0xF1) {
+			     switch (msg[10]) {
+			        case (byte) 0xF2:
+				       subcontactRequestAns(msg);
+				       break;
+	                case (byte) 0xF3:
+	                	subcontactRequest(msg);
+			    	   break;
+			        default:
+				       break;
+			     }
+			}
+		} catch (Exception e) {
+			ErrorLog.errorWrite("传入数据", e);
+			// TODO: handle exception
 		}
+		
 	}
 	
 	/***
@@ -58,6 +64,69 @@ public class ProtocolOperate {
 	}
 	
 	/***
+	 * 判断分包发送是否接受正确
+	 * @param msg
+	 */
+	public static void  subcontactRequest(byte[] msg) {
+		switch (msg[11]) {
+		case (byte)0x80:
+			try {
+				subcontactRequestSuccess(msg);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				ErrorLog.errorWrite("分包发送回复", e);
+			}
+			break;
+		default:
+			try {
+				subcontactRequestFail(msg);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				ErrorLog.errorWrite("分包发送回复", e);
+			}
+			return;
+		}
+	}
+	
+	/***
+	 * 上一包发送成功 开始发送下一包
+	 * @param msg
+	 */
+	public static void subcontactRequestSuccess(byte[] msg) {
+		String gprsid=Protocol.getGprsId(msg);
+		OTATask.get(gprsid).send(true);
+	}
+	
+	/***
+	 * 上一包发生失败 重新发送
+	 * 80H：传送成功； 
+       01H：序号错误；
+       02H：接收的数据量不对；
+       03H：接收超时
+	 * @param msg
+	 */
+	public static void subcontactRequestFail(byte[] msg) throws Exception{
+		String errorMsg;
+		switch (msg[11]) {
+           case (byte)0x01:
+			 errorMsg="序号错误";
+			 break;
+           case (byte)0x02:
+        	   errorMsg="接收的数据量不对";
+	         break;
+           case (byte)0x03:
+        	   errorMsg="接收超时";
+		    break;
+		   default:
+			   errorMsg="未知错误："+msg[11];
+			break;
+		}
+		String gprsid=Protocol.getGprsId(msg);
+		OTAMap.get(gprsid).setResult_info("第"+OTATask.get(gprsid).getNow_pack_num()+"失败："+errorMsg);
+		OTATask.get(gprsid).send(false);
+	}
+	
+	/***
 	 * 分包请求通过 开始传包
 	 * @param msg
 	 * @throws Exception
@@ -68,6 +137,7 @@ public class ProtocolOperate {
 	}
 	
 	/***
+	 * 分包发送请求失败 
 	 * 01H：数据过长；
     02H：帧类型错误；
     03H：数据长度与数据包数目不匹配；

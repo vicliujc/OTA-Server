@@ -31,8 +31,13 @@ public class OtaServer implements Runnable{
 	
 	private String path;
 	private int now_pack_num;
-	
 	private int failTime=0;
+	
+	public int getNow_pack_num() {
+		return now_pack_num;
+	}
+
+	
 	
 	public OtaServer(OTAMsg otaMsg) {
 		this.path=otaMsg.getBin_file_path();
@@ -123,6 +128,8 @@ public class OtaServer implements Runnable{
 			}
     		else {
 				failTime ++;
+				SqlMsg sqlMsg=OTAMap.get(otaMsg.getGprs_id());
+				SqlExecute.put(sqlMsg);
 			}
     		if (now_pack_num>packNum) {
     			statewrite("所有分包已经发送完毕");
