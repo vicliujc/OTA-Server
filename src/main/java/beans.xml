@@ -51,7 +51,10 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
    </bean>
    <bean id="protocol" class="com.vic.OTAServer.OTA_Server.Protocol">
    </bean>
-   <bean id="SqlMsg" class="com.vic.mybatis.SqlMsg" scope="prototype">
+   <bean id="sqlMsg" class="com.vic.mybatis.SqlMsg" scope="prototype">
    </bean>
    <bean id="sqlExecute" class="com.vic.mybatis.SqlExecute"></bean>
+   <bean id="onOffMsg" class="com.vic.gprs.OnOffMsg">
+    <property name="port" value="9090"></property>
+   </bean>
 </beans>

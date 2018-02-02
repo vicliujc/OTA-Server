@@ -23,10 +23,10 @@ public class MyUtil {
 	
 	public static byte[] intTobyteArray(int num) {
 		byte[] ans=new byte[4];
-		ans[0]=(byte) ((num>>12) & 0xff);
-		ans[1]=(byte) ((num>>8) & 0xff);
-		ans[2]=(byte) ((num>>4) & 0xff);
-		ans[3]=(byte) (num & 0xff);
+		ans[0]=(byte) ((num>>>24) & (byte)0xff);
+		ans[1]=(byte) ((num>>>16) & (byte)0xff);
+		ans[2]=(byte) ((num>>>8) & (byte)0xff);
+		ans[3]=(byte) (num & (byte)0xff);
        return ans;
        }
 	

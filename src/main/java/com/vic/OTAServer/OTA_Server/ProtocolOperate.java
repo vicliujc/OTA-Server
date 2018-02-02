@@ -38,7 +38,7 @@ public class ProtocolOperate {
 	 */
 	public static void operate(byte[] msg) {
 		try {
-			if (msg[2] == (byte)0xF1) {
+			if (msg[3] == (byte)0xF1) {
 			     switch (msg[10]) {
 			        case (byte) 0xF2:
 				       subcontactRequestAns(msg);
@@ -359,7 +359,7 @@ public class ProtocolOperate {
 	 * @param msg
 	 */
 	public static void  subcontactRequest(byte[] msg) {
-		switch (msg[11]) {
+		switch (msg[13]) {
 		case (byte)0x80:
 			try {
 				subcontactRequestSuccess(msg);

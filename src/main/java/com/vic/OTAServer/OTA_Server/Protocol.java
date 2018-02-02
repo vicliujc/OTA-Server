@@ -1,5 +1,7 @@
 package com.vic.OTAServer.OTA_Server;
 
+import java.lang.annotation.Target;
+
 import com.vic.util.*;
 
 public class Protocol {
@@ -39,7 +41,7 @@ public class Protocol {
 	 * @return
 	 */
 	public static byte[] fullSend(byte[] data) {
-		byte[] head= {(byte) 0xf7,0x7f};
+		byte[] head= {(byte) 0x7f,(byte) 0xf7};
 		byte[] length = { (byte) (data.length+1)};
 		if (data.length>254) length[0]= 0x00;
 		byte[] allMsg=new byte[data.length+4];
@@ -67,14 +69,20 @@ public class Protocol {
 	public static byte[] subcontractRequest(int docLength,int num,byte object,byte fimwareType ,byte version,byte[] subnum) {
 		byte[] head= {(byte) 0xf2,0x20};
 		byte[] length=MyUtil.intTobyteArray(docLength);
-		byte[] packNum= { MyUtil.intTobyteArray(docLength)[2],MyUtil.intTobyteArray(docLength)[3]};
+		byte[] packNum= { MyUtil.intTobyteArray(num)[2],MyUtil.intTobyteArray(num)[3]};
 		byte[] ver= {object,fimwareType,version};
-		byte[] allMsg=new byte[14];
+		byte[] allMsg;
+		if(object==3) {
+       allMsg=new byte[14];}
+		else {
+			allMsg=new byte[11];
+		}
 		System.arraycopy(head, 0, allMsg, 0, 2);
 		System.arraycopy(length, 0, allMsg, 2, 4);
 		System.arraycopy(packNum, 0, allMsg, 6, 2);
 		System.arraycopy(ver, 0, allMsg, 8, 3);
-		System.arraycopy(subnum, 0, allMsg, 11, 3);
+		if(object==3) {
+		System.arraycopy(subnum, 0, allMsg, 11, 3);}
 		return fullSend(allMsg);
 	}
 	

@@ -13,7 +13,7 @@ import ErrorLogger.ErrorLog;
 
 public class SqlExecute implements Runnable {
 	private static final LinkedBlockingQueue<SqlMsg> changeStatusQueue=new LinkedBlockingQueue<SqlMsg>();
-	private static final int MAX_SQL_NUM=10;
+	
 	
 	ApplicationContext ac=App1.ac;
 	public static void put(SqlMsg sqlMsg) throws InterruptedException {
@@ -23,15 +23,12 @@ public class SqlExecute implements Runnable {
 	public void run() {
 		OTADao otaDao;
 		try {
-		ExecutorService pool=Executors.newFixedThreadPool(MAX_SQL_NUM);	
-		// TODO Auto-generated method stub
 		while(true) {
 			try {
 				SqlMsg sqlMsg=changeStatusQueue.take();
-				TransferStatusThread transferStatusThread=new TransferStatusThread(sqlMsg);
-				pool.submit(transferStatusThread);
+				otaDao=(OTADao) App1.ac.getBean("otaDao");
+				otaDao.transferStatus(sqlMsg);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				ErrorLog.errorWrite("插入队列", e);
 			}
 		}

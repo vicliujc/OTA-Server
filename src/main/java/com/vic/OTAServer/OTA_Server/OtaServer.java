@@ -17,6 +17,7 @@ import com.vic.mybatis.OTADao;
 import com.vic.mybatis.OTAMsg;
 import com.vic.mybatis.SqlExecute;
 import com.vic.mybatis.SqlMsg;
+import com.vic.util.MyUtil;
 
 import ErrorLogger.ErrorLog;
 import io.netty.buffer.Unpooled;
@@ -25,7 +26,7 @@ import io.netty.channel.ChannelHandlerContext;
 public class OtaServer implements Runnable{
 	ApplicationContext ac=App1.ac;
 	
-	public static int UNPACK_FRAME_LENGTH=514;//不含bbc crc校验 表头长度
+	public static int UNPACK_FRAME_LENGTH=510;//含bbc crc校验 表头长度
 	public int  packNum;
 	public static Logger logger=Logger.getLogger(OtaServer.class);
 	// 读取文件后的全部byte[] 
@@ -83,8 +84,10 @@ public class OtaServer implements Runnable{
 	public byte[] tanceforByteNow(int num) throws Exception {
 		if(num>packNum) throw new Exception("不存在传输的包数");
 		if (doc.length==0) throw new Exception("未传入文件");
-	    byte[] now_pack=new byte[UNPACK_FRAME_LENGTH];
-	    System.arraycopy(doc, UNPACK_FRAME_LENGTH*(num-1), now_pack, 0, UNPACK_FRAME_LENGTH);
+	    byte[] now_pack=new byte[UNPACK_FRAME_LENGTH+2];
+	    System.arraycopy(doc, UNPACK_FRAME_LENGTH*(num-1), now_pack, 2, UNPACK_FRAME_LENGTH);
+	    byte[] pack_num_send=MyUtil.intToUInt16Bytes(now_pack_num);
+	    System.arraycopy(pack_num_send,0,now_pack,0,2);
 	    return Protocol.subcontractMsg(now_pack);
 	} 
 	
@@ -97,7 +100,8 @@ public class OtaServer implements Runnable{
     	try {
     	byte[] subcontact=Protocol.subcontractRequest(doc.length, packNum,(byte)otaMsg.getTarget(), (byte) otaMsg.getFirmware(), (byte) otaMsg.getVersion(), otaMsg.getSub());
     	ChannelHandlerContext ctx=Gprs.getCTX(otaMsg.getGprs_id());
-    	ctx.writeAndFlush(Unpooled.copiedBuffer(subcontact));
+    	ctx.write(Unpooled.copiedBuffer(subcontact));
+    	ctx.flush();
     	OTADao otaDao=(OTADao) ac.getBean("otaDao");
     	SqlMsg sqlMsg=(SqlMsg) ac.getBean("sqlMsg");
     	sqlMsg.setId(otaMsg.getId());

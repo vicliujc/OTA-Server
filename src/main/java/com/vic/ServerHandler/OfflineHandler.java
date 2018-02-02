@@ -3,8 +3,10 @@ package com.vic.ServerHandler;
 import org.apache.log4j.Logger;
 
 import com.vic.gprs.Gprs;
+import com.vic.gprs.OnOffMsg;
 import com.vic.main.App1;
 import com.vic.main.NettyStart;
+import com.vic.mybatis.OnlineOfflineThread;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -33,6 +35,10 @@ public class OfflineHandler extends ChannelInboundHandlerAdapter {
 				//System.out.println(Gprs.getOnlineGprs().containsKey(ctx.channel().attr(NettyStart.GPRS).get().getGprs()));
 				Gprs.remove(ctx.channel().attr(NettyStart.GPRS).get().getGprs());
 				//System.out.println(Gprs.getOnlineGprs().containsKey(ctx.channel().attr(NettyStart.GPRS).get().getGprs()));
+				OnOffMsg onOffMsg=(OnOffMsg) App1.ac.getBean("onOffMsg");
+				onOffMsg.setLink_status(0);
+				onOffMsg.setGprs_id(ctx.channel().attr(NettyStart.GPRS).get().getGprs());
+				OnlineOfflineThread.put(onOffMsg);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -6,8 +6,10 @@ import org.springframework.context.ApplicationContext;
 import com.vic.OTAServer.OTA_Server.Protocol;
 import com.vic.gprs.Gprs;
 import com.vic.gprs.GprsAttribute;
+import com.vic.gprs.OnOffMsg;
 import com.vic.main.App1;
 import com.vic.main.NettyStart;
+import com.vic.mybatis.OnlineOfflineThread;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,10 +20,14 @@ public class Register extends ChannelInboundHandlerAdapter{
     private static Logger logger = Logger.getLogger(Register.class); 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx,Object msg) throws Exception{
-		
 		ByteBuf buf=(ByteBuf) msg;
 		byte[] rep=new byte[buf.readableBytes()];
 		buf.getBytes(0, rep);
+		boolean ansIsReal=Protocol.isRealData(rep);
+		if(!ansIsReal){
+			ctx.fireChannelRead(msg);
+			return;
+		}
 		String gprsId=Protocol.getGprsId(rep);
 		if (gprsId == null) {
 			return;
@@ -30,6 +36,11 @@ public class Register extends ChannelInboundHandlerAdapter{
 		{
 			ctx.channel().pipeline().remove("Register");
 		}
+		OnOffMsg onOffMsg=(OnOffMsg) App1.ac.getBean("onOffMsg");
+		onOffMsg.setLink_status(1);
+		onOffMsg.setGprs_id(ctx.channel().attr(NettyStart.GPRS).get().getGprs());
+		OnlineOfflineThread.put(onOffMsg);
+		System.out.println(gprsId+"上线");
 		ctx.fireChannelRead(msg);  
 	}
 	

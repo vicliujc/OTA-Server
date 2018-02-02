@@ -3,7 +3,7 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.vic.mybatis.OTAMethod">
     <select id="otaSelect" parameterType="int" resultMap="selectMap">
-     select id,gprs_id,target,bin_file_path,firmware,version,slave_indexes FROM ota_send WHERE send_done=0 LIMIT #{number};
+     select t1.id,t1.gprs_id,t1.target,t1.bin_file_path,t1.firmware,t1.version,t1.slave_indexes FROM ota_send t1 JOIN rcv_gprs_list t2 on t1.gprs_id=t2.gprs_id WHERE t2.link_status=1 AND send_done=0 LIMIT #{number};
     </select>
     <resultMap id="selectMap" type="com.vic.mybatis.OTAMsg">
       <id property="id" column="id"></id>
@@ -22,4 +22,14 @@
     <update id="initializeStatus" parameterType="int">
        UPDATE rcv_gprs_list SET link_status=0 where port=#{port};
     </update>
+     <update id="initializeOTAStatus" >
+       UPDATE ota_send SET send_done=7, result_info='升级过程重启程序' WHERE send_done=1;
+    </update>
+   
+    
+    <update id="onlineUpdate" parameterType="com.vic.gprs.OnOffMsg" >
+      INSERT INTO rcv_gprs_list (gprs_id,link_status,port) value(#{gprs_id},#{link_status},#{port}) ON DUPLICATE KEY UPDATE link_status=#{link_status} , update_time=default , port=#{port};
+      
+    </update>
+    
 </mapper>

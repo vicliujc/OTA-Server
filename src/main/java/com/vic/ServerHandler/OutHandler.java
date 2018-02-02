@@ -7,6 +7,8 @@ import com.vic.OTAServer.OTA_Server.ProtocolOperate;
 
 import ErrorLogger.ErrorLog;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
@@ -27,7 +29,13 @@ public class OutHandler extends ChannelOutboundHandlerAdapter {
 					System.out.print(" "+ Integer.toHexString(b&(int)0xff));
 				}
 		        System.out.print("\r\n");
-		        ctx.writeAndFlush(msg);
+		        ctx.writeAndFlush(msg).addListener(new ChannelFutureListener() {
+		            public void operationComplete(ChannelFuture future) throws Exception {
+		                if (!future.isSuccess()){
+		                    future.cause().printStackTrace();
+		                }
+		            }
+		        });
 			 }catch (Exception e) {
 				// TODO: handle exception
 				 e.printStackTrace();

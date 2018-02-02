@@ -67,7 +67,7 @@ public class NettyStart implements Runnable {
 			
 		}catch(Exception ex) {
 			logger.error("NETTY START",ex);
-			
+			ex.printStackTrace();
 		}
 		finally {
 		}

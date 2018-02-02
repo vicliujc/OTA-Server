@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.vic.mybatis.OTADao;
+import com.vic.mybatis.OnlineOfflineThread;
 import com.vic.mybatis.SqlStart;
 
 public class App1 {
@@ -22,6 +23,8 @@ public class App1 {
 			//ApplicationContext ac=new ClassPathXmlApplicationContext("com/vic/main/beans.xml");
 		    OTADao otaDao =(OTADao) ac.getBean("otaDao");
 		    otaDao.initializeStatus();
+		    otaDao.initializeOTAStatus();
+		    new Thread(new OnlineOfflineThread()).start();
 			NettyStart nettyStart=(NettyStart) ac.getBean("nettyStart");
 			new Thread(nettyStart).start();
 			SqlStart sqlStart=new SqlStart();

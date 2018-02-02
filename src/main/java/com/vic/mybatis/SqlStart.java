@@ -48,7 +48,7 @@ public class SqlStart implements Runnable{
 				    	  OtaServer otaServer=new OtaServer(otaObject);
 				    	  threadPool.submit(otaServer);
 				    	  OTATask.put(otaObject.getGprs_id(), otaServer);
-				    	  new Thread(otaServer).start();
+				    	//  new Thread(otaServer).start();
 				    	}
 				    }
 					}

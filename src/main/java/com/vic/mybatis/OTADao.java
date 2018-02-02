@@ -7,6 +7,8 @@ import javax.net.ssl.SSLEngineResult.Status;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.context.ApplicationContext;
 
+import com.vic.gprs.OnOffMsg;
+
 public class OTADao implements OTAMethod{
     private SqlSessionTemplate sessionTemplate;
     private int port ;
@@ -42,6 +44,22 @@ public class OTADao implements OTAMethod{
 	public void initializeStatus() {
 		// TODO Auto-generated method stub          
 		String statement="com.vic.mybatis.OTAMethod.initializeStatus";
+		sessionTemplate.update(statement, port);
+	}
+	
+	/***
+	 * 更新上下线状态
+	 */
+	public void onlineUpdate(OnOffMsg onOffMsg) {
+		String statement="com.vic.mybatis.OTAMethod.onlineUpdate";
+		sessionTemplate.update(statement, onOffMsg);
+	}
+	
+	/***
+	 * 重启程序初始化OTA传输状态
+	 */
+	public void initializeOTAStatus() {
+		String statement="com.vic.mybatis.OTAMethod.initializeOTAStatus";
 		sessionTemplate.update(statement, port);
 	}
 	
