@@ -50,9 +50,10 @@ public class ProtocolOperate {
 			        default:
 				       break;
 			     }
-			     if (msg[2]== (byte) 0x20) {
-					UpgateResult(msg);
-				}
+			}
+			
+			if (msg[3]== (byte) 0x25) {
+				UpgateResult(msg);
 			}
 		} catch (Exception e) {
 			ErrorLog.errorWrite("传入数据", e);

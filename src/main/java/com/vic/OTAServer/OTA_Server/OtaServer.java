@@ -84,8 +84,16 @@ public class OtaServer implements Runnable{
 	public byte[] tanceforByteNow(int num) throws Exception {
 		if(num>packNum) throw new Exception("不存在传输的包数");
 		if (doc.length==0) throw new Exception("未传入文件");
-	    byte[] now_pack=new byte[UNPACK_FRAME_LENGTH+2];
-	    System.arraycopy(doc, UNPACK_FRAME_LENGTH*(num-1), now_pack, 2, UNPACK_FRAME_LENGTH);
+		byte[] now_pack;
+		if(num==packNum) {
+			now_pack=new byte[doc.length-UNPACK_FRAME_LENGTH* (num-1)+2];
+			System.arraycopy(doc, UNPACK_FRAME_LENGTH* (num-1) , now_pack, 2, doc.length-UNPACK_FRAME_LENGTH* (num-1));
+		}
+		else {
+			now_pack=new byte[UNPACK_FRAME_LENGTH+2];
+			System.arraycopy(doc, UNPACK_FRAME_LENGTH*(num-1), now_pack, 2, UNPACK_FRAME_LENGTH);
+		}
+	  
 	    byte[] pack_num_send=MyUtil.intToUInt16Bytes(now_pack_num);
 	    System.arraycopy(pack_num_send,0,now_pack,0,2);
 	    return Protocol.subcontractMsg(now_pack);

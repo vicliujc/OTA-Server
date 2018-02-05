@@ -12,7 +12,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
    <context:component-scan base-package="com.vic.mybatis" />
    
    <bean id="nettyStart" class="com.vic.main.NettyStart">
-      <property name="port" value="9090"></property>
+      <property name="port" value="9000"></property>
    </bean>
    <bean id="gprsAttribute" class="com.vic.gprs.GprsAttribute" scope="prototype"></bean>
    
@@ -47,7 +47,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
   
    <bean id="otaDao" class="com.vic.mybatis.OTADao">
       <property name="sessionTemplate" ref="sqlSessionTemplate"/>
-      <property name="port" value="9090"/>
+      <property name="port" value="9000"/>
    </bean>
    <bean id="protocol" class="com.vic.OTAServer.OTA_Server.Protocol">
    </bean>
@@ -55,6 +55,6 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
    </bean>
    <bean id="sqlExecute" class="com.vic.mybatis.SqlExecute"></bean>
    <bean id="onOffMsg" class="com.vic.gprs.OnOffMsg">
-    <property name="port" value="9090"></property>
+    <property name="port" value="9000"></property>
    </bean>
 </beans>

@@ -1,6 +1,8 @@
 package com.vic.OTAServer.OTA_Server;
 
 import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.vic.util.*;
 
@@ -43,13 +45,13 @@ public class Protocol {
 	public static byte[] fullSend(byte[] data) {
 		byte[] head= {(byte) 0x7f,(byte) 0xf7};
 		byte[] length = { (byte) (data.length+1)};
-		if (data.length>254) length[0]= 0x00;
+		if (data.length>255) length[0]= 0x00;
 		byte[] allMsg=new byte[data.length+4];
 		byte bbc=0x00;
 		System.arraycopy(head, 0, allMsg, 0, 2);
 		System.arraycopy(length, 0, allMsg, 2, 1);
 		System.arraycopy(data, 0, allMsg, 3, data.length);
-		for (int i = 0; i < allMsg.length; i++) {
+		for (int i = 0; i < allMsg.length-1; i++) {
 			bbc ^= allMsg[i];
 		}
 		allMsg[allMsg.length-1]=bbc;
@@ -100,10 +102,10 @@ public class Protocol {
 		byte[] dataLength=new byte[2];
 		
 		byte[] crc=CRC16.calculate(data);
-		if(data.length>253) 
+		if(data.length>252) 
 		{
-		    dataLength[0] = MyUtil.intTobyteArray(data.length+4)[2] ;
-	     	dataLength[1] = MyUtil.intTobyteArray(data.length+4)[3] ;
+		    dataLength[0] = MyUtil.intTobyteArray(data.length+3)[2] ;
+	     	dataLength[1] = MyUtil.intTobyteArray(data.length+3)[3] ;
 		    byte[] allMsg=new byte[data.length+5];
 	    	allMsg[0]=(byte) 0xf3;
 	    	System.arraycopy(dataLength, 0, allMsg, 1, 2);
@@ -118,6 +120,30 @@ public class Protocol {
 			System.arraycopy(crc, 0, allMsg, data.length+1, 2);
 			return fullSend(allMsg);
 		}
+	}
+	
+	
+	public static List<byte[]> unpacking(byte[] msg) throws Exception{
+		List<byte[]> ans=new ArrayList<byte[]>();
+		ans.clear();
+		if(msg.length<= msg[2]+3) {
+			ans.add(msg);
+			return ans;
+		}
+		
+		for (int i = 2; i < msg.length; i++) {
+			if(msg[i]== (byte)0x7F) {
+				if(i+1 <msg.length && msg[i+1]== (byte)0xF7) {
+					byte[] ans1=new byte[i];
+					System.arraycopy(msg, 0, ans1, 0, i);
+					ans.add(ans1);
+					byte[] ans2=new byte[msg.length-i];
+					System.arraycopy(msg, i, ans2, 0, msg.length-i);
+					ans.add(ans2);
+				}
+			}
+		}
+		return ans;
 	}
 	 
 

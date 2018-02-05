@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import com.vic.ServerHandler.OfflineHandler;
 import com.vic.ServerHandler.Register;
 import com.vic.ServerHandler.ServerHandler;
+import com.vic.ServerHandler.UnpackingHandler;
 import com.vic.ServerHandler.OutHandler;
 import com.vic.gprs.GprsAttribute;
 
@@ -52,6 +53,7 @@ public class NettyStart implements Runnable {
             		ChannelPipeline p=ch.pipeline();
             		p.addLast("outHandler",new OutHandler());
             		p.addLast(new IdleStateHandler(30,0, 0,TimeUnit.MINUTES));
+            		p.addLast("Unpacking",new UnpackingHandler());
             		p.addLast("Register",new Register());
             		p.addLast(new ServerHandler());
             		p.addLast(new OfflineHandler());
