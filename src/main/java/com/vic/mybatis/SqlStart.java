@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import com.vic.OTAServer.OTA_Server.DocRead;
 import com.vic.OTAServer.OTA_Server.OtaServer;
 import com.vic.gprs.OTATask;
+import com.vic.gprs.OTATimeOut;
 import com.vic.main.App1;
 
 import org.apache.log4j.Logger;
@@ -33,6 +34,7 @@ public class SqlStart implements Runnable{
 				ExecutorService threadPool=Executors.newFixedThreadPool(OTA_START_NUM);
 				SqlExecute sqlExecute=(SqlExecute) ac.getBean("sqlExecute");
 				new Thread(sqlExecute).start();
+				new Thread(new OTATimeOut()).start();
 				while(true) {
 					
 					Thread.sleep(10000);
@@ -45,6 +47,8 @@ public class SqlStart implements Runnable{
 					    OTAObjects=pollingInstruction.findOTA();
 				        if(!OTAObjects.isEmpty()) {
 				    	  for(OTAMsg otaObject:OTAObjects) {
+				    		  if (OTATask.contain(otaObject.getGprs_id())) 
+								continue;
 				    	  OtaServer otaServer=new OtaServer(otaObject);
 				    	  threadPool.submit(otaServer);
 				    	  OTATask.put(otaObject.getGprs_id(), otaServer);

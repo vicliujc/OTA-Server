@@ -33,7 +33,7 @@ public class OTATimeOut implements Runnable {
 	 */
 	private static boolean compareTime(Date date) throws Exception{
 		long time = new Date().getTime();
-		return (time> (date.getTime()+3600000) );
+		return (time> (date.getTime()+10800000) );
 	}
 
 	/***
@@ -51,7 +51,6 @@ public class OTATimeOut implements Runnable {
 							if (compareTime(entry.getValue())) {
 								OTADao otaDao=(OTADao) App1.ac.getBean("otaDao");
 						    	SqlMsg sqlMsg=OTAMap.get(entry.getKey());
-						    	sqlMsg.setResult_info("超时");
 						    	sqlMsg.setId(6);
 						    	SqlExecute.put(sqlMsg);
 						    	OTAMap.remove(entry.getKey());
