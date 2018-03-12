@@ -27,17 +27,17 @@ public class OTATimeOut implements Runnable {
 	}
 	
 	/***
-	 * 判断是否超时 3600000=1小时
+	 * 判断是否超时 600 000=1小时
 	 * @param date
 	 * @return
 	 */
 	private static boolean compareTime(Date date) throws Exception{
 		long time = new Date().getTime();
-		return (time> (date.getTime()+10800000) );
+		return (time> (date.getTime()+600000) );
 	}
 
 	/***
-	 * 比较两个时间 每十分钟对比map里元素一次
+	 * 比较两个时间 每五分钟对比map里元素一次
 	 */
 	public void run() {
 		// TODO Auto-generated method stub
@@ -66,7 +66,7 @@ public class OTATimeOut implements Runnable {
 				
 			}
 		    try {
-				Thread.sleep(600000);
+				Thread.sleep(300000);
 		    } catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 				e.printStackTrace();

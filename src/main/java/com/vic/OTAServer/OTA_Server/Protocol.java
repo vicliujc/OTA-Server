@@ -102,7 +102,7 @@ public class Protocol {
 		byte[] dataLength=new byte[2];
 		
 		byte[] crc=CRC16.calculate(data);
-		if(data.length>252) 
+		if(data.length>251) 
 		{
 		    dataLength[0] = MyUtil.intTobyteArray(data.length+3)[2] ;
 	     	dataLength[1] = MyUtil.intTobyteArray(data.length+3)[3] ;
@@ -126,6 +126,9 @@ public class Protocol {
 	public static List<byte[]> unpacking(byte[] msg) throws Exception{
 		List<byte[]> ans=new ArrayList<byte[]>();
 		ans.clear();
+		if (msg.length<3) {
+			return null;
+		}
 		if(msg.length<= msg[2]+3) {
 			ans.add(msg);
 			return ans;

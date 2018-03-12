@@ -50,8 +50,8 @@ public class SqlStart implements Runnable{
 				    		  if (OTATask.contain(otaObject.getGprs_id())) 
 								continue;
 				    	  OtaServer otaServer=new OtaServer(otaObject);
-				    	  threadPool.submit(otaServer);
 				    	  OTATask.put(otaObject.getGprs_id(), otaServer);
+				    	  threadPool.submit(otaServer);
 				    	//  new Thread(otaServer).start();
 				    	}
 				    }
@@ -59,7 +59,7 @@ public class SqlStart implements Runnable{
 					catch(Exception x) 
 					{
 						x.printStackTrace();
-					logger.error("Exception",x);
+					logger.error("sql start Exception",x);
 					}
 					
 					

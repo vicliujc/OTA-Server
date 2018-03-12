@@ -57,6 +57,6 @@ public class Register extends ChannelInboundHandlerAdapter{
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
             throws Exception {
         cause.printStackTrace();
-        logger.error(cause);
+        logger.error("数据进入",cause);
     }
 }

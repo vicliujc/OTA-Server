@@ -28,6 +28,9 @@ public class OfflineHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
 		try {
+			if (ctx.channel().attr(NettyStart.GPRS).get()==null ) {
+				return;
+			}
 			if (!Gprs.getOnlineGprs().containsKey( ctx.channel().attr(NettyStart.GPRS).get().getGprs()))
                 return;
 			if(Gprs.getOnlineGprs().get( ctx.channel().attr(NettyStart.GPRS).get().getGprs()).channel().id().asLongText()
@@ -44,7 +47,7 @@ public class OfflineHandler extends ChannelInboundHandlerAdapter {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			logger.error(e);
+			logger.error("offline",e);
 		}
 	}
 

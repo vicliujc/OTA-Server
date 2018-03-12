@@ -19,6 +19,9 @@ public class UnpackingHandler extends ChannelInboundHandlerAdapter {
 			    byte[] msgByte=new byte[buf.readableBytes()];
 			    buf.getBytes(0, msgByte);
 			    List<byte[]> msgList=Protocol.unpacking(msgByte) ;
+			    if (msgList==null) {
+					return;
+				}
 			    for (byte[] b : msgList) {
 			       ctx.fireChannelRead( Unpooled.copiedBuffer(b) );
 				}

@@ -37,7 +37,7 @@ public class DocRead {
 				return true;
 			}
 			System.out.println(path + " 此路径文件不存在");
-			throw new Exception("未找到文件");
+			return false;
 		} finally {
 			// TODO: handle finally clause
 			

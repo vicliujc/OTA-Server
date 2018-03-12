@@ -5,10 +5,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 
 import com.vic.ServerHandler.OfflineHandler;
+import com.vic.ServerHandler.OutHandler;
 import com.vic.ServerHandler.Register;
 import com.vic.ServerHandler.ServerHandler;
 import com.vic.ServerHandler.UnpackingHandler;
-import com.vic.ServerHandler.OutHandler;
 import com.vic.gprs.GprsAttribute;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -20,6 +20,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.AttributeKey;
 
@@ -53,6 +54,8 @@ public class NettyStart implements Runnable {
             		ChannelPipeline p=ch.pipeline();
             		p.addLast("outHandler",new OutHandler());
             		p.addLast(new IdleStateHandler(30,0, 0,TimeUnit.MINUTES));
+            		p.addLast("Unpacking1",new LengthFieldBasedFrameDecoder(256,
+            	            2, 1, 0, 0));
             		p.addLast("Unpacking",new UnpackingHandler());
             		p.addLast("Register",new Register());
             		p.addLast(new ServerHandler());

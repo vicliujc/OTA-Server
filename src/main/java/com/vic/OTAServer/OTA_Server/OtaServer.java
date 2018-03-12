@@ -37,12 +37,20 @@ public class OtaServer implements Runnable{
 	private int now_pack_num;
 	private int failTime=0;
 	
+	/***\
+	 * 获得现在的数
+	 * @return
+	 */
 	public int getNow_pack_num() {
 		return now_pack_num;
 	}
 
 	
-	
+	/***
+	 * 构造器 传入otamsg对象
+	 * 
+	 * @param otaMsg
+	 */
 	public OtaServer(OTAMsg otaMsg) {
 		this.otaMsg=otaMsg;
 		this.path=otaMsg.getBin_file_path();
@@ -106,6 +114,15 @@ public class OtaServer implements Runnable{
     	ApplicationContext ac=App1.ac;
     	//先发分包请求
     	try {
+    		if (doc==null) {
+    	    	SqlMsg sqlMsg=(SqlMsg) ac.getBean("sqlMsg");
+    	    	sqlMsg.setId(otaMsg.getId());
+    	    	sqlMsg.setResult_info("未找到文件");
+    	    	sqlMsg.setState(3);
+    	    	SqlExecute.put(sqlMsg);
+    	    	OTATask.remove(otaMsg.getGprs_id());
+    	    	return;
+    		}
     	byte[] subcontact=Protocol.subcontractRequest(doc.length, packNum,(byte)otaMsg.getTarget(), (byte) otaMsg.getFirmware(), (byte) otaMsg.getVersion(), otaMsg.getSub());
     	ChannelHandlerContext ctx=Gprs.getCTX(otaMsg.getGprs_id());
     	ctx.write(Unpooled.copiedBuffer(subcontact));
@@ -119,7 +136,6 @@ public class OtaServer implements Runnable{
     	OTAMap.put(otaMsg.getGprs_id(), sqlMsg);
     	OTATimeOut.put(otaMsg.getGprs_id(), new Date());
     	now_pack_num=0;
-    	
     	}
     	catch (Exception e) {
 			logger.error("OtaServer run", e);// TODO: handle exception
@@ -137,6 +153,10 @@ public class OtaServer implements Runnable{
     			SqlMsg sqlMsg=OTAMap.get(otaMsg.getGprs_id());
     	    	sqlMsg.setState(3);
     			statewrite("第"+now_pack_num+"包传输失败超过5次");
+    			String gprsid=otaMsg.getGprs_id();
+    			OTAMap.remove(gprsid);
+    			OTATask.remove(gprsid);
+    			OTATimeOut.remove(gprsid);
 				return ;
 			}
     		if (ans) {
@@ -150,6 +170,7 @@ public class OtaServer implements Runnable{
 			}
     		if (now_pack_num>packNum) {
     			statewrite("所有分包已经发送完毕");
+    			OTATimeOut.remove(otaMsg.getGprs_id());
         		return;
         	}
     		byte[] transforPack=tanceforByteNow(now_pack_num);

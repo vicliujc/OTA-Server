@@ -40,7 +40,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		 }catch (Exception e) {
 			// TODO: handle exception
 			 e.printStackTrace();
-			 logger.error("Exception",e);
+			 logger.error("channelRead Exception",e);
 		}
 	    }
 }
