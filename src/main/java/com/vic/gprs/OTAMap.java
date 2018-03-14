@@ -19,5 +19,9 @@ public class OTAMap {
 	public static SqlMsg get(String gprsid) {
 	    return	OTANOW.get(gprsid);
 	}
+	
+	public static boolean contains(String gprsid) {
+		return OTANOW.containsKey(gprsid);
+	}
 
 }

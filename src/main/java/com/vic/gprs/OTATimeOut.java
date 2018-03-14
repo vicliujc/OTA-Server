@@ -27,13 +27,13 @@ public class OTATimeOut implements Runnable {
 	}
 	
 	/***
-	 * 判断是否超时 600 000=1小时
+	 * 判断是否超时7200 000=2小时
 	 * @param date
 	 * @return
 	 */
 	private static boolean compareTime(Date date) throws Exception{
 		long time = new Date().getTime();
-		return (time> (date.getTime()+600000) );
+		return (time> (date.getTime()+7200000) );
 	}
 
 	/***
@@ -50,11 +50,15 @@ public class OTATimeOut implements Runnable {
 							Entry<String, Date> entry=it.next();
 							if (compareTime(entry.getValue())) {
 								OTADao otaDao=(OTADao) App1.ac.getBean("otaDao");
+								if(OTAMap.contains(entry.getKey())) {
 						    	SqlMsg sqlMsg=OTAMap.get(entry.getKey());
 						    	sqlMsg.setId(6);
 						    	SqlExecute.put(sqlMsg);
 						    	OTAMap.remove(entry.getKey());
+								}
+								if(OTATask.contains(entry.getKey())) 
 						    	OTATask.remove(entry.getKey());
+								OTATime.remove(entry.getKey());
 							}
 						} catch (Exception e) {
 							ErrorLog.errorWrite("超时监测比较", e);

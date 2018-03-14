@@ -384,7 +384,7 @@ public class ProtocolOperate {
 	 * 上一包发送成功 开始发送下一包
 	 * @param msg
 	 */
-	public static void subcontactRequestSuccess(byte[] msg) {
+	public static void subcontactRequestSuccess(byte[] msg) throws Exception{
 		String gprsid=Protocol.getGprsId(msg);
 		OTATask.get(gprsid).send(true);
 	}
@@ -399,9 +399,11 @@ public class ProtocolOperate {
 	 */
 	public static void subcontactRequestFail(byte[] msg) throws Exception{
 		String errorMsg;
+		String gprsid=Protocol.getGprsId(msg);
 		switch (msg[11]) {
            case (byte)0x01:
 			 errorMsg="序号错误";
+           OTATask.get(gprsid).send(true);
 			 break;
            case (byte)0x02:
         	   errorMsg="接收的数据量不对";
@@ -413,7 +415,6 @@ public class ProtocolOperate {
 			   errorMsg="未知错误："+msg[11];
 			break;
 		}
-		String gprsid=Protocol.getGprsId(msg);
 		OTAMap.get(gprsid).setResult_info("第"+OTATask.get(gprsid).getNow_pack_num()+"失败："+errorMsg);
 		OTATask.get(gprsid).send(false);
 	}

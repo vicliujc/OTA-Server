@@ -47,7 +47,7 @@ public class SqlStart implements Runnable{
 					    OTAObjects=pollingInstruction.findOTA();
 				        if(!OTAObjects.isEmpty()) {
 				    	  for(OTAMsg otaObject:OTAObjects) {
-				    		  if (OTATask.contain(otaObject.getGprs_id())) 
+				    		  if (OTATask.contains(otaObject.getGprs_id())) 
 								continue;
 				    	  OtaServer otaServer=new OtaServer(otaObject);
 				    	  OTATask.put(otaObject.getGprs_id(), otaServer);

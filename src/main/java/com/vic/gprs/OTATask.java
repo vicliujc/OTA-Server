@@ -24,7 +24,7 @@ public class OTATask {
 		return OTADATA.size();
 	}
 	
-	public static boolean contain(String gprsid) {
+	public static boolean contains(String gprsid) {
 		return OTADATA.containsKey(gprsid);
 	}
 

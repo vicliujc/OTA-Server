@@ -2,6 +2,7 @@ package com.vic.mybatis;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
+import com.vic.gprs.OTATask;
 import com.vic.gprs.OnOffMsg;
 import com.vic.main.App1;
 
@@ -20,6 +21,9 @@ public class OnlineOfflineThread implements Runnable{
 				OnOffMsg onoff=OnOffQueue.take();
 				OTADao otaDao=(OTADao) App1.ac.getBean("otaDao");
 				otaDao.onlineUpdate(onoff);
+				if(OTATask.contains(onoff.getGprs_id())) {
+				  OTATask.get(onoff.getGprs_id()).send(false);
+				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

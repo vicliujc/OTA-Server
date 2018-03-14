@@ -12,6 +12,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.ReferenceCountUtil;
 
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 	private static Logger logger = Logger.getLogger(ServerHandler.class);
@@ -36,7 +37,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 	        System.out.print("\r\n");
 	        if(ansIsReal)
 	        ProtocolOperate.distributionDataThread(req);
-	        
+	        buf.release();
 		 }catch (Exception e) {
 			// TODO: handle exception
 			 e.printStackTrace();
