@@ -62,7 +62,8 @@ public class NettyStart implements Runnable {
             		p.addLast(new OfflineHandler());
             		
             	}
-			}).childOption(ChannelOption.SO_KEEPALIVE, true);
+			}).childOption(ChannelOption.SO_KEEPALIVE, true)
+            .childOption(ChannelOption.TCP_NODELAY, true);
 			
 			
 			ChannelFuture future=sb.bind(port).sync();

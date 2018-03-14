@@ -2,6 +2,7 @@ package com.vic.OTAServer.OTA_Server;
 
 import java.nio.file.attribute.FileTime;
 import java.util.Date;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.chainsaw.Main;
@@ -36,6 +37,9 @@ public class OtaServer implements Runnable{
 	private String path;
 	private int now_pack_num;
 	private int failTime=0;
+	//建立存储doc map
+	public static final HashMap<String, byte[]> DOCMAP= new HashMap<String, byte[]>();
+	
 	
 	/***\
 	 * 获得现在的数
@@ -72,7 +76,10 @@ public class OtaServer implements Runnable{
 	//读取文档
 	private void getDocNow() throws Exception {
 		DocRead docRead=new DocRead(path);
-		doc=docRead.getDocBin();
+		if (!DOCMAP.containsKey(path)) {
+			DOCMAP.put(path, docRead.getDocBin());
+		}
+		doc=DOCMAP.get(path);
 		packNum=(int) Math.ceil( (double)doc.length/UNPACK_FRAME_LENGTH);
 	}
 	
