@@ -25,11 +25,28 @@
      <update id="initializeOTAStatus" >
        UPDATE ota_send SET send_done=7, result_info='升级过程重启程序' WHERE send_done=1;
     </update>
-   
-    
     <update id="onlineUpdate" parameterType="com.vic.gprs.OnOffMsg" >
       INSERT INTO rcv_gprs_list (gprs_id,link_status,port) value(#{gprs_id},#{link_status},#{port}) ON DUPLICATE KEY UPDATE link_status=#{link_status} , update_time=default , port=#{port};
-      
+    </update>
+    
+    <select id="addressMsgGet" resultMap="selectAddressMap" >
+       select t1.id, t1.gprs_id, t1.type_1,t1.adress_1,t1.type_2,t1.adress_2,t1.type_3,t1.adress_3,t1.type_4,t1.adress_4 from modify_connectaddress_send t1 JOIN rcv_gprs_list t2 on t1.gprs_id=t2.gprs_id where t2.link_status=1 AND send_done=0 group by gprs_id;
+    </select>
+    <resultMap id="selectAddressMap" type="com.vic.gprs.AddressMsg">
+      <id property="id" column="id"></id>
+        <result property="gprs_id" column="gprs_id"></result>
+      <result property="type1" column="type_1"></result>
+      <result property="type2" column="type_2"></result>
+      <result property="type3" column="type_3"></result>
+      <result property="type4" column="type_4"></result>
+      <result property="address1" column="adress_1"></result>
+      <result property="address2" column="adress_2"></result>
+      <result property="address3" column="adress_3"></result>
+      <result property="address4" column="adress_4"></result>
+    </resultMap>
+    
+    <update id="addressChangeAns" parameterType="com.vic.gprs.AddressMsg" >
+    UPDATE modify_connectaddress_send SET send_done = #{send_done} where gprs_id=#{gprs_id} limit 1;
     </update>
     
 </mapper>

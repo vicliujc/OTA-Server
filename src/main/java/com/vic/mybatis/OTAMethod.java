@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.vic.gprs.AddressMsg;
 import com.vic.gprs.OnOffMsg;
 
 @Repository 
@@ -18,4 +19,8 @@ public interface OTAMethod {
 	public void transferStatus(SqlMsg sqlMsg);
 	
 	public void onlineUpdate(OnOffMsg onOffMsg);
+	
+	public  List<AddressMsg> addressMsgGet();
+	
+	public void addressChangeAns(AddressMsg addressMsg);
 }

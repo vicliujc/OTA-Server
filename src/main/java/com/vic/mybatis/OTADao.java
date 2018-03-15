@@ -7,6 +7,7 @@ import javax.net.ssl.SSLEngineResult.Status;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.context.ApplicationContext;
 
+import com.vic.gprs.AddressMsg;
 import com.vic.gprs.OnOffMsg;
 
 public class OTADao implements OTAMethod{
@@ -61,6 +62,21 @@ public class OTADao implements OTAMethod{
 	public void initializeOTAStatus() {
 		String statement="com.vic.mybatis.OTAMethod.initializeOTAStatus";
 		sessionTemplate.update(statement, port);
+	}
+	
+	//获取更改地址数据
+	public List<AddressMsg> addressMsgGet() {
+		String statement="com.vic.mybatis.OTAMethod.addressMsgGet";
+		return sessionTemplate.selectList(statement);
+		
+		
+	}
+	
+	//更改地址状态更新
+	public void addressChangeAns(AddressMsg addressMsg) {
+		// TODO Auto-generated method stub
+		String statement="com.vic.mybatis.OTAMethod.addressChangeAns";
+		sessionTemplate.update(statement,addressMsg);
 	}
 	
 	

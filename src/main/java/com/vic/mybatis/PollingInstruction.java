@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.support.DaoSupport;
 
+import com.vic.gprs.AddressMsg;
 import com.vic.gprs.OTATask;
 
 public class PollingInstruction {
@@ -24,6 +26,15 @@ public class PollingInstruction {
 		List<OTAMsg> msgs=dao.otaSelect( 30-OTATask.size() );
 		
 		return msgs;
+	}
+	
+	/***
+	 * 获取地址改变数据
+	 */
+	public  List<AddressMsg> findAddress(){
+		OTADao dao=(OTADao) ac.getBean("otaDao");
+		 List<AddressMsg> msgs= dao.addressMsgGet();
+		 return msgs;
 	}
 
 }
