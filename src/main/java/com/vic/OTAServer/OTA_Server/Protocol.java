@@ -4,6 +4,7 @@ import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.vic.gprs.AddressMsg;
 import com.vic.util.*;
 
 public class Protocol {
@@ -149,5 +150,16 @@ public class Protocol {
 		return ans;
 	}
 	 
+	
+	public static byte[] addressChange(AddressMsg addressMsg) {
+		byte[] type=new byte[] {0x27,(byte)addressMsg.getType1(), (byte)addressMsg.getType2(), (byte)addressMsg.getType3(), (byte)addressMsg.getType4()};
+		String address=addressMsg.getAddress1()+"#"+addressMsg.getAddress2()+"#"+addressMsg.getAddress3()+"#"+addressMsg.getAddress4()+"#";
+		byte[] addressByte=address.getBytes();
+		byte[] ans=new byte[type.length+addressByte.length];
+		System.arraycopy(type, 0, ans, 0, type.length);
+		System.arraycopy(addressByte, 0, ans, type.length, addressByte.length);
+		return fullSend(ans);
+		
+	}
 
 }

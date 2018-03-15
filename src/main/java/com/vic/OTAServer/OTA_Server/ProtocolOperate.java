@@ -5,18 +5,20 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 
+import com.vic.gprs.AddressMsg;
 import com.vic.gprs.OTAMap;
 import com.vic.gprs.OTATask;
 import com.vic.gprs.OTATimeOut;
 import com.vic.main.App1;
 import com.vic.mybatis.OTADao;
 import com.vic.mybatis.OTAMsg;
+import com.vic.mybatis.SqlExecute;
 import com.vic.mybatis.SqlMsg;
 
 import ErrorLogger.ErrorLog;
 
 public class ProtocolOperate {
-	private static final int MAX_DATAPROCESSING_NUM=10;
+	private static final int MAX_DATAPROCESSING_NUM=20;
 	
 	/***
 	 * 创建线程处理传入数据
@@ -54,6 +56,17 @@ public class ProtocolOperate {
 			
 			if (msg[3]== (byte) 0x25) {
 				UpgateResult(msg);
+			}
+			
+			if (msg[3]==(byte) 0xF1) {
+				switch (msg[10]) {
+				case (byte) 0x27:
+					AddressChangeAns(msg);
+					break;
+
+				default:
+					break;
+				}
 			}
 		} catch (Exception e) {
 			ErrorLog.errorWrite("传入数据", e);
@@ -471,6 +484,46 @@ public class ProtocolOperate {
 		sqlMsg.setResult_info("分包请求失败："+errorMsg);
 		OTADao otaDao=(OTADao) App1.ac.getBean("otaDao");
 		otaDao.transferStatus(sqlMsg);
+	}
+	
+	/***
+	 * 地址结果分析
+	 * @param ans
+	 * @throws InterruptedException 
+	 */
+	public static void AddressChangeAns(byte[] ans) throws InterruptedException {
+		switch (ans[11]) {
+		case (byte)0x80:
+			AddressChangeSuccess(ans);
+			break;
+		default:
+			AddressChangeFail(ans);
+			break;
+		}
+	}
+	
+	/***
+	 * 更改地址成功
+	 * @throws InterruptedException 
+	 */
+	public static void AddressChangeSuccess(byte[] ans) throws InterruptedException {
+		String gprs_id=Protocol.getGprsId(ans);
+		AddressMsg addressMsg=new AddressMsg();
+		addressMsg.setGprs_id(gprs_id);
+		addressMsg.setSend_done(2);
+		SqlExecute.put(addressMsg);
+	}
+	
+	/***
+	 * 更改地址失败
+	 * @throws InterruptedException 
+	 */
+    public static void AddressChangeFail(byte[] ans) throws InterruptedException {
+    	String gprs_id=Protocol.getGprsId(ans);
+		AddressMsg addressMsg=new AddressMsg();
+		addressMsg.setGprs_id(gprs_id);
+		addressMsg.setSend_done(3);
+		SqlExecute.put(addressMsg);
 	}
 
 }
