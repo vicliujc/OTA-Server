@@ -87,7 +87,7 @@ public class SqlStart implements Runnable{
                         if (!addressObjects.isEmpty()) {
                     	  try {
                     		  for(AddressMsg addressMsg:addressObjects) {
-                    			  System.out.println( Gprs.containsKey(addressMsg.getGprs_id()) );
+                    			 // System.out.println( Gprs.containsKey(addressMsg.getGprs_id()) );
                     			  if (!Gprs.containsKey(addressMsg.getGprs_id()))
                     				  continue;
                         		  sendAddressChange(addressMsg);

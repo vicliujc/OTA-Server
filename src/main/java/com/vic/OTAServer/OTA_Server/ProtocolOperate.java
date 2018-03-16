@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import org.apache.log4j.Logger;
 
 import com.vic.gprs.AddressMsg;
+import com.vic.gprs.Gprs;
 import com.vic.gprs.OTAMap;
 import com.vic.gprs.OTATask;
 import com.vic.gprs.OTATimeOut;
@@ -16,6 +17,7 @@ import com.vic.mybatis.SqlExecute;
 import com.vic.mybatis.SqlMsg;
 
 import ErrorLogger.ErrorLog;
+import io.netty.buffer.Unpooled;
 
 public class ProtocolOperate {
 	private static final int MAX_DATAPROCESSING_NUM=20;
@@ -57,6 +59,9 @@ public class ProtocolOperate {
 			if (msg[3]== (byte) 0x25) {
 				UpgateResult(msg);
 			}
+			if (msg[3]== (byte) 0xf0) {
+				heartAck(msg);
+			}
 			
 			if (msg[3]==(byte) 0xF1) {
 				switch (msg[10]) {
@@ -72,6 +77,11 @@ public class ProtocolOperate {
 			ErrorLog.errorWrite("传入数据", e);
 			// TODO: handle exception
 		}
+	}
+	
+	//心跳回复
+	public static void heartAck(byte[] msg) {
+		Gprs.getCTX(Protocol.getGprsId(msg)).writeAndFlush(Unpooled.copiedBuffer(msg));
 	}
 	
 	/***

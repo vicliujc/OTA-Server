@@ -21,9 +21,9 @@ public class OnlineOfflineThread implements Runnable{
 				OnOffMsg onoff=OnOffQueue.take();
 				OTADao otaDao=(OTADao) App1.ac.getBean("otaDao");
 				otaDao.onlineUpdate(onoff);
-				if(OTATask.contains(onoff.getGprs_id())) {
-				  OTATask.get(onoff.getGprs_id()).send(false);
-				}
+//				if(OTATask.contains(onoff.getGprs_id())) {
+//				  OTATask.get(onoff.getGprs_id()).send(false);
+//				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
