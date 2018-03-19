@@ -28,11 +28,11 @@ public class OfflineHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) {
 		try {
-			System.out.println("111离线触发");
+			//System.out.println("111离线触发");
 			if (ctx.channel().attr(NettyStart.GPRS).get()==null ) {
 				return;
 			}
-			System.out.println(ctx.channel().attr(NettyStart.GPRS).get().getGprs()+"离线触发");
+			//System.out.println(ctx.channel().attr(NettyStart.GPRS).get().getGprs()+"离线触发");
 			
 			if (!Gprs.getOnlineGprs().containsKey( ctx.channel().attr(NettyStart.GPRS).get().getGprs()))
                 return;
